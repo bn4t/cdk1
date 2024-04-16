@@ -10,3 +10,4 @@ data/my_grid_map.html filter=lfs diff=lfs merge=lfs -text
 data/agri4cast.csv filter=lfs diff=lfs merge=lfs -text
 data/grid_25km.dbf filter=lfs diff=lfs merge=lfs -text
 data/grid_25km.html filter=lfs diff=lfs merge=lfs -text
+data/test.csv filter=lfs diff=lfs merge=lfs -text
