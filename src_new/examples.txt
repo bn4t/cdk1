@@ -1,0 +1,2 @@
+https://www.highcharts.com/demo/dashboards/climate
+https://www.highcharts.com/demo/dashboards/live-weather
