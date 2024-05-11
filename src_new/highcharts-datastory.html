@@ -24,19 +24,29 @@
     (async () => {
 
 
+        const data = []
+
+        const response = await fetch('http://localhost:8000/flooding_events_ch_precipation_yearly.csv')
+        const text = await response.text()
+        const rows = text.split('\n')
+
+        rows.forEach(row => {
+            const columns = row.split(',')
+
+            data.push({
+                year: parseInt(columns[1]),
+                precipation: parseInt(columns[2]),
+                floods: parseInt(columns[3]),
+            })
+        })
+
+
         Highcharts.chart('pluvial-floods-line-chart', {
             chart: {
                 type: 'line'
             },
             title: {
                 text: 'Precipitation Data Representation'
-            },
-            data: {
-                csvURL: 'http://localhost:8000/rainfall-aggregated.csv',
-                seriesMapping: [{
-                    x: 4,
-                    y: 9
-                }]
             },
             plotOptions: {
                 line: {
@@ -48,51 +58,151 @@
             },
             yAxis: {
                 title: {
-                    text: 'Precipitation'
-                }
+                    text: 'Floods'
+                },
+                type: 'logarithmic',
             },
             xAxis: {
                 title: {
-                    text: 'Days'
-                }
+                    text: 'Year'
+                },
+                min: 1979,
             },
+
+            series: [{
+                name: 'Floods',
+                data: data.map(d => [d.year, d.floods])
+            }, {
+                name: 'Precipitation',
+                data: data.map(d => [d.year, d.precipation])
+            }]
         });
 
     })();
 </script>
 
 
+<div id="precipation-global-temp"></div>
 <script>
-
-
     (async () => {
+        Highcharts.chart('precipation-global-temp', {
+            chart: {
+                type: 'heatmap',
+                inverted: true
+            },
+
+            accessibility: {
+                description: 'We see how temperatures are warmer during the day, especially from around 9am to 9pm. May 8th through 11th are also overall colder days compared to the rest. Overall the temperatures range from around -1 degrees C to around 23 degrees C.'
+            },
+
+            data: {
+                csvURL: 'http://localhost:8000/precipation_monthly_sum_with_global_mean_temp.csv',
+            },
+
+            title: {
+                text: 'Highcharts heat map',
+                align: 'left'
+            },
+
+            subtitle: {
+                text: 'Temperature variation by day and hour through May 2017',
+                align: 'left'
+            },
+
+            xAxis: {
+                tickPixelInterval: 50,
+                min: Date.UTC(2017, 4, 1),
+                max: Date.UTC(2017, 4, 30)
+            },
+
+            yAxis: {
+                accessibility: {
+                    description: 'Hours in the day'
+                },
+                title: {
+                    text: null
+                },
+                labels: {
+                    format: '{value}:00'
+                },
+                lineWidth: 1,
+                minPadding: 0,
+                maxPadding: 0,
+                startOnTick: false,
+                endOnTick: false,
+                tickPositions: [0, 6, 12, 18, 24],
+                tickWidth: 1,
+                min: 0,
+                max: 23
+            },
+
+            colorAxis: {
+                stops: [
+                    [0, '#3060cf'],
+                    [0.5, '#fffbbc'],
+                    [0.9, '#c4463a']
+                ],
+                min: -5
+            },
+
+            series: [{
+                borderWidth: 0,
+                colsize: 24 * 36e5, // one day
+                tooltip: {
+                    headerFormat: 'Temperature<br/>',
+                    pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
+                },
+                accessibility: {
+                    enabled: false
+                }
+            }]
+        });
+    })();
+
+
+    /*
+    (async () => {
+
 
         const data = []
 
-        const response = await fetch('http://localhost:8000/pluvial_rainfall.csv-e')
+        const response = await fetch('http://localhost:8000/precipation_monthly_sum_with_global_mean_temp.csv')
         const text = await response.text()
         const rows = text.split('\n')
 
         rows.forEach(row => {
             const columns = row.split(',')
+            if (columns[1] === '197901') {
 
-            data.push({
-                lat: parseFloat(columns[1]),
-                lon: parseFloat(columns[2]),
-                value: parseFloat(columns[9]),
-            })
+                data.push({
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [parseFloat(columns[4]), parseFloat(columns[3])]
+                    },
+                    lat: parseFloat(columns[3]),
+                    lon: parseFloat(columns[4]),
+                    value: parseInt(columns[5]),
+                })
+            }
         })
 
+        console.log(data)
 
         const topology = await fetch(
-            'https://code.highcharts.com/mapdata/custom/european-union.topo.json'
+            // get map for switzerland
+            'https://code.highcharts.com/mapdata/countries/ch/ch-all.topo.json'
         ).then(response => response.json());
 
-        Highcharts.mapChart('container', {
+
+        Highcharts.mapChart('precipation-global-temp', {
             chart: {
                 map: topology
             },
 
+            colorAxis: {
+                min: 0,
+                max: 200
+            },
             mapNavigation: {
                 enabled: true,
                 buttonOptions: {
@@ -100,14 +210,8 @@
                 }
             },
 
-            colorAxis: {
-                min: 0,
-                max: 5
-            },
-
-
             series: [{
-                name: 'Europe',
+                name: 'Switzerland',
                 borderColor: 'rgba(0, 0, 0, 0.4)',
                 states: {
                     inactive: {
@@ -119,21 +223,20 @@
                 }
             }, {
                 type: 'geoheatmap',
-                name: 'Rainfall',
-                opacity: 1,
-                colsize: 0.2,
-                rowsize: 0.2,
-                borderWidth: 1,
+                data: data,
+                colsize: 0.5,
+                rowsize: 0.5,
                 interpolation: {
                     enabled: true,
-                    blur: 1.6
+                    blur: 1
                 },
-                data: data,
-            }
-            ]
-        });
+            }]
+        })
+        ;
 
     })();
+
+     */
 </script>
 
 </body>
