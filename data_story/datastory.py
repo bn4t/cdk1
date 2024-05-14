@@ -11,12 +11,12 @@ agri4cast_yearly = agri4cast.resample('YE', on='DAY').sum().reset_index().assign
 # calculate delta for the precipitation data
 agri4cast_yearly_global_temp = pd.merge(agri4cast_yearly, global_mean_temp, left_on='YEAR', right_on='YEAR')
 
-
 agri4cast_yearly_global_temp['PRECIPITATION_DELTA'] = agri4cast_yearly_global_temp.PRECIPITATION.diff()
 
 # calculate the correlation between the global mean temperature and the precipitation
 # TODO: visualize this
-agri4cast_yearly_global_temp['CORR_PRECIPITATION_MEAN_TEMP'] = agri4cast_yearly_global_temp['PRECIPITATION'].corr(agri4cast_yearly_global_temp['No_Smoothing'])
+agri4cast_yearly_global_temp['CORR_PRECIPITATION_MEAN_TEMP'] = agri4cast_yearly_global_temp['PRECIPITATION'].corr(
+    agri4cast_yearly_global_temp['No_Smoothing'])
 
 # calculate the sliding window average
 agri4cast_resampled['precipitation_moving_avg_48_months'] = agri4cast_resampled['PRECIPITATION'].rolling(48).mean()
@@ -32,6 +32,19 @@ app.layout = html.Div([
     html.H2(children='Einführung', style={'textAlign': 'center'}),
     html.P(children='Lässt sich ein Zusammenhang finden zwischen Klimawandel und Fluten in der Schweiz?'),
 
+    html.Pre(children="""
+    # 1. Einführung: chart mit global mean temp. 
+    # Fragestellung: Lässt sich ein Zusammenhang finden zwischen Klimawandel und Fluten in der Schweiz?
+
+    # 2. Progressiv Korrelation zwischen global mean temp und Niederschlagsdaten aufzeigen
+    # - Chart mit Niederschlagsdaten und Klimadaten + map with grid_no selection
+    # - Chart mit Flutdaten + Niederschlagsdaten + Klimadaten + map with grid_no selection
+    # - Erläuterungen zu allen plots
+
+    # 3. Korrelation erläutern und prognosen stellen
+    
+    """),
+
     dcc.Graph(figure=px.line(global_mean_temp, x='YEAR', y='No_Smoothing', title='Global Mean Temperature')),
 
     html.P(children='Observation Chart', style={'textAlign': 'center'}),
@@ -43,27 +56,15 @@ app.layout = html.Div([
         'precipitation_moving_avg_24_months',
         'precipitation_moving_avg_12_months',
         'precipitation_moving_avg_6_months'], title='Niederschlagsdaten')),
-    html.P(children='Erklärung Chart + button to move through the different averages starting with the raw data visualizing how it becomes only obvious when having a larger rolling average', style={'textAlign': 'center'}),
+    html.P(
+        children='Erklärung Chart + button to move through the different averages starting with the raw data visualizing how it becomes only obvious when having a larger rolling average',
+        style={'textAlign': 'center'}),
 
-
-    dcc.Graph(figure=px.line(agri4cast_yearly_global_temp, x='YEAR', y=['PRECIPITATION', 'No_Smoothing'], title='Niederschlagsdaten und Klimadaten', log_y=True)),
+    dcc.Graph(figure=px.line(agri4cast_yearly_global_temp, x='YEAR', y=['PRECIPITATION', 'No_Smoothing'],
+                             title='Niederschlagsdaten und Klimadaten', log_y=True)),
     # scatterplot with the same data
-    dcc.Graph(figure=px.scatter(agri4cast_yearly_global_temp, x='No_Smoothing', y='PRECIPITATION', title='Scatterplot Niederschlagsdaten und Klimadaten', color='YEAR')),
-
-    # Einführung
-    # - chart mit global mean temp
-    # Fragestellung: Lässt sich ein Zusammenhang finden zwischen Klimawandel und Fluten in der Schweiz?
-
-    # 1. Daten
-    # - Chart mit Niederschlagsdaten und Klimadaten + map with grid_no selection
-    # Erklärung Chart
-    #
-    # - mit Flutdaten + Niederchlagsdaten + Klimadaten + map with grid_no selection
-    # Erklärung Chart
-
-    # 2. Analyse
-    # Observations
-    # Explanation for results
+    dcc.Graph(figure=px.scatter(agri4cast_yearly_global_temp, x='No_Smoothing', y='PRECIPITATION',
+                                title='Scatterplot Niederschlagsdaten und Klimadaten', color='YEAR')),
 
     dcc.Dropdown(agri4cast_resampled.GRID_NO.unique(), '0', id='dropdown-selection'),
     dcc.Graph(id='graph-content')
