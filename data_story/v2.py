@@ -66,14 +66,19 @@ precipitation_global_mean_temp_scatter_chart = px.scatter(
     labels={'No_Smoothing': 'Global Mean Temperature', 'PRECIPITATION': 'Jährlicher Regenfall (mm)'}
 )
 
-precipitation_moving_avg_chart = dcc.Graph(figure=px.line(agri4cast_monthly_df, x='DAY', y=[
-    'PRECIPITATION',
-    'precipitation_moving_avg_48_months',
-    'precipitation_moving_avg_36_months',
-    'precipitation_moving_avg_24_months',
-    'precipitation_moving_avg_12_months',
-    'precipitation_moving_avg_6_months'], title='Niederschlagsdaten'),
-                                           ),
+precipitation_moving_avg_chart = px.line(
+    agri4cast_monthly_df,
+    x='DAY',
+    y=[
+        'PRECIPITATION',
+        'precipitation_moving_avg_48_months',
+        'precipitation_moving_avg_36_months',
+        'precipitation_moving_avg_24_months',
+        'precipitation_moving_avg_12_months',
+        'precipitation_moving_avg_6_months',
+    ],
+    title='Niederschlagsdaten',
+)
 
 # Define the layout of the app
 app.layout = html.Div(children=[
@@ -132,6 +137,9 @@ app.layout = html.Div(children=[
             Da die globale Durchschnittstemperatur und die jährlich gemesse Niederschlagsmenge in der Schweiz stark korrelieren,
             ist es wahrscheinlich, dass der Klimawandel die Häufigkeit und Intensität von Extremwetterereignissen wie Hochwasser in der Schweiz erhöhen kann.
         ''', className='text-lg mb-4'),
+
+        dcc.Graph(figure=precipitation_global_mean_temp_scatter_chart, className='my-8'),
+        dcc.Graph(figure=precipitation_moving_avg_chart, className='my-8'),
 
         html.H2(children='Fazit', className='text-2xl font-semibold my-4'),
         html.P(children='''
