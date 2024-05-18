@@ -5,7 +5,7 @@ COPY requirements.txt /
 RUN pip install -r /requirements.txt \
 	&& rm -rf /root/.cache
 
-COPY src/ ./
+COPY . .
 
 ENV ENVIRONMENT_FILE=".env"
 
