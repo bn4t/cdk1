@@ -10,7 +10,6 @@ agri4cast_yearly = agri4cast.resample('YE', on='DAY').sum().reset_index().assign
 
 # calculate delta for the precipitation data
 agri4cast_yearly_global_temp = pd.merge(agri4cast_yearly, global_mean_temp, left_on='YEAR', right_on='YEAR')
-
 agri4cast_yearly_global_temp['PRECIPITATION_DELTA'] = agri4cast_yearly_global_temp.PRECIPITATION.diff()
 
 # calculate the correlation between the global mean temperature and the precipitation
@@ -55,7 +54,11 @@ app.layout = html.Div([
         'precipitation_moving_avg_36_months',
         'precipitation_moving_avg_24_months',
         'precipitation_moving_avg_12_months',
-        'precipitation_moving_avg_6_months'], title='Niederschlagsdaten')),
+        'precipitation_moving_avg_6_months'], title='Niederschlagsdaten'),
+        ),
+    dcc.Graph(figure=px.scatter(agri4cast_resampled, x='DAY', y='precipitation_moving_avg_12_months',
+                                title='Scatterplot Niederschlagsdaten',
+                                trendline='ols')),
     html.P(
         children='Erklärung Chart + button to move through the different averages starting with the raw data visualizing how it becomes only obvious when having a larger rolling average',
         style={'textAlign': 'center'}),
@@ -64,8 +67,8 @@ app.layout = html.Div([
                              title='Niederschlagsdaten und Klimadaten', log_y=True)),
     # scatterplot with the same data
     dcc.Graph(figure=px.scatter(agri4cast_yearly_global_temp, x='No_Smoothing', y='PRECIPITATION',
-                                title='Scatterplot Niederschlagsdaten und Klimadaten', color='YEAR')),
-
+                                title='Scatterplot Niederschlagsdaten und Klimadaten', color='YEAR',
+                                trendline='ols')),
     dcc.Dropdown(agri4cast_resampled.GRID_NO.unique(), '0', id='dropdown-selection'),
     dcc.Graph(id='graph-content')
 ])
