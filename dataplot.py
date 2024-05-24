@@ -37,63 +37,78 @@ flood_data = pd.merge(flood_data, regions_data, on=['Latitude', 'Longitude'], ho
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-app.layout = html.Div([
-    dbc.Container([
-        dbc.Row([
-            dbc.Col(html.H1("Dashboard", className="text-center mt-3", style={'color': 'white'}), width=12),
-            dbc.Col(html.H3("Klimadaten Challenge 2024", className="text-center text-muted", style={'color': 'white'}), width=12),
-            dbc.Col(html.H4("Benjamin, Boran und Murat", className="text-center text-muted mb-4", style={'color': 'white'}), width=12)
-        ]),
-        dbc.Row([
-            dbc.Col([
-                dcc.Graph(id='map-plot'),
-                html.Br(),  # Add a line break for spacing
-                dcc.Slider(
-                    id='year-slider',
-                    min=flood_data['Year'].min(),
-                    max=flood_data['Year'].max(),
-                    value=flood_data['Year'].max(),
-                    marks={str(year): {'label': str(year), 'style': {'transform': 'rotate(45deg)', 'white-space': 'nowrap'}} for year in flood_data['Year'].unique()},
-                    step=None
-                ),
-                html.Br(),  # Add another line break for more spacing
-                dash_table.DataTable(
-                    id='flood-table',
-                    columns=[
-                        {'name': 'Location', 'id': 'location'},
-                        {'name': 'Start Date', 'id': 'Start date'},
-                        {'name': 'End Date', 'id': 'End date'},
-                        {'name': 'Precipitation (mm)', 'id': 'precipitation'}
-                    ],
-                    style_table={'overflowX': 'auto'},
-                    style_cell={'textAlign': 'left'}
-                )
-            ], width=6, lg=6),  # Karte und Slider links
-            dbc.Col([
-                dbc.Row(
-                    dbc.Col(
-                        dcc.Dropdown(
-                            id='country-dropdown',
-                            options=[{'label': country, 'value': country} for country in flood_data['Country name'].unique()],
-                            value='Germany',  # Standardwert
-                            clearable=False
-                        ),
-                        width=12
+app.layout = html.Div(
+    style={
+        'background-image': 'url("/assets/ch_background.png")',
+        'background-size': 'cover',
+        'background-repeat': 'no-repeat',
+        'background-attachment': 'fixed',
+        'height': '100vh',  # Ensure the background covers the entire viewport height
+        'width': '100vw',   # Ensure the background covers the entire viewport width
+        'overflow': 'hidden',  # Ensure content doesn't overflow the viewport
+    },
+    children=[
+        dbc.Container([
+            dbc.Row([
+                dbc.Col(html.H1("Dashboard", className="text-center mt-3", style={'color': 'white'}), width=12),
+                dbc.Col(html.H3("Klimadaten Challenge 2024", className="text-center text-muted", style={'color': 'white'}), width=12),
+                dbc.Col(html.H4("Benjamin, Boran und Murat", className="text-center text-muted mb-4", style={'color': 'white'}), width=12)
+            ]),
+            dbc.Row([
+                dbc.Col([
+                    dcc.Graph(id='map-plot', style={'background-color': 'rgba(255, 255, 255, 0.8)', 'border-radius': '10px', 'padding': '10px'}),
+                    html.Br(),  # Add a line break for spacing
+                    dcc.Slider(
+                        id='year-slider',
+                        min=flood_data['Year'].min(),
+                        max=flood_data['Year'].max(),
+                        value=flood_data['Year'].max(),
+                        marks={str(year): {'label': str(year), 'style': {'transform': 'rotate(45deg)', 'white-space': 'nowrap', 'color': 'red'}} for year in flood_data['Year'].unique()},
+                        step=None
                     ),
-                ),
-                dbc.Row(
-                    dbc.Col(dcc.Graph(id='precipitation-plot'), width=12),
-                ),
-                dbc.Row(
-                    dbc.Col(dcc.Graph(id='temperature-plot'), width=12),
-                ),
-                dbc.Row(
-                    dbc.Col(dcc.Graph(id='boxplot-plot'), width=12),
-                )
-            ], width=6, lg=6)  # Grafen rechts
-        ])
-    ], fluid=True)
-])
+                    html.Br(),  # Add another line break for more spacing
+                    dash_table.DataTable(
+                        id='flood-table',
+                        columns=[
+                            {'name': 'Location', 'id': 'location'},
+                            {'name': 'Start Date', 'id': 'Start date'},
+                            {'name': 'End Date', 'id': 'End date'},
+                            {'name': 'Precipitation (mm)', 'id': 'precipitation'}
+                        ],
+                        style_table={'overflowX': 'auto'},
+                        style_cell={'textAlign': 'left'},
+                        style_header={'backgroundColor': 'rgba(255, 255, 255, 0.8)'},
+                        style_data={'backgroundColor': 'rgba(255, 255, 255, 0.8)'},
+                        style_as_list_view=True
+                    )
+                ], width=6, lg=6),  # Karte und Slider links
+                dbc.Col([
+                    dbc.Row(
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id='country-dropdown',
+                                options=[{'label': country, 'value': country} for country in flood_data['Country name'].unique()],
+                                value='Germany',  # Standardwert
+                                clearable=False,
+                                style={'background-color': 'rgba(255, 255, 255, 0.8)'}
+                            ),
+                            width=12
+                        ),
+                    ),
+                    dbc.Row(
+                        dbc.Col(dcc.Graph(id='precipitation-plot', style={'background-color': 'rgba(255, 255, 255, 0.8)', 'border-radius': '10px', 'padding': '10px'}), width=12),
+                    ),
+                    dbc.Row(
+                        dbc.Col(dcc.Graph(id='temperature-plot', style={'background-color': 'rgba(255, 255, 255, 0.8)', 'border-radius': '10px', 'padding': '10px'}), width=12),
+                    ),
+                    dbc.Row(
+                        dbc.Col(dcc.Graph(id='boxplot-plot', style={'background-color': 'rgba(255, 255, 255, 0.8)', 'border-radius': '10px', 'padding': '10px'}), width=12),
+                    )
+                ], width=6, lg=6)  # Grafen rechts
+            ])
+        ], fluid=True, style={'height': '90vh', 'overflowY': 'scroll'})
+    ]
+)
 
 @app.callback(
     Output('map-plot', 'figure'),
