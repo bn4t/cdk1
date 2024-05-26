@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=bebas-neue:400" rel="stylesheet"/>
+</head>
+<style>
+    * {
+        scroll-behavior: smooth;
+        font-family: 'Bebas Neue', cursive;
+    }
+
+    .content {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+        overflow: auto;
+        position: relative;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .section {
+        width: 100%;
+        height: 100vh;
+        scroll-snap-align: start;
+    }
+
+    #section-2 {
+        /*
+        linear gradient background image meteo.png
+        */
+        background-image: linear-gradient(rgb(254 243 199), rgba(0, 0, 0, 0.6)), url('assets/meteo.png');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        box-shadow: inset 1em -1em 10em 10em rgb(254 243 199);
+    }
+
+    #section-3 {
+        position: relative;
+    }
+
+    #section-4 {
+        position: relative;
+    }
+
+    #section-5 {
+        position: relative;
+    }
+
+    /*
+    Half-tone effect in different strengths
+
+    */
+
+    .video-wrapper-light {
+        position: static;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        filter: saturate(0) brightness(2) contrast(5);
+        -webkit-filter: saturate(0) brightness(2) contrast(5);
+    }
+
+    .video-wrapper-light::after {
+        content: ' ';
+        display: block;
+        position: static;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background-size: 14px 10px, 14px 10px;
+        background-position: 0, 7px 0px;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0) 50%, #000), radial-gradient(circle, rgba(255, 255, 255, 0) 50%, #000);
+        mix-blend-mode: multiply;
+    }
+
+    .video-wrapper-light video {
+        width: 100vw;
+        height: 56.25vw; /* Given a 16:9 aspect ratio, 9/16*100 = 56.25 */
+        min-height: 100vh;
+        min-width: 177.77vh; /* Given a 16:9 aspect ratio, 16/9*100 = 177.77 */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+
+    .video-wrapper-medium {
+        position: static;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        filter: saturate(0) brightness(2) contrast(5);
+        -webkit-filter: saturate(0) brightness(2) contrast(5);
+    }
+
+    .video-wrapper-medium::after {
+        content: ' ';
+        display: block;
+        position: static;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background-size: 14px 10px, 14px 10px;
+        background-position: 0, 7px 0px;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0) 29%, #000), radial-gradient(circle, rgba(255, 255, 255, 0) 29%, #000);
+        mix-blend-mode: multiply;
+    }
+
+    .video-wrapper-medium video {
+        width: 100vw;
+        height: 56.25vw; /* Given a 16:9 aspect ratio, 9/16*100 = 56.25 */
+        min-height: 100vh;
+        min-width: 177.77vh; /* Given a 16:9 aspect ratio, 16/9*100 = 177.77 */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(254 243 199);
+        mix-blend-mode: multiply;
+    }
+</style>
+
+<body class="bg-amber-100">
+
+<div class="content">
+    <div class="section my-10 py-32 flex items-center justify-center" id="section-1">
+        <div>
+            <h1 class="text-center italic md:text-9xl sm:text-8xl text-6xl font-semibold tracking-widest">Fluten durch Klimawandel?</h1>
+            <h2 class="text-center mt-4 text-2xl font-semibold tracking-wider italic">Wie der Klimawandel Flutkatastrophen
+                verursacht.</h2>
+            <a href="#section-2">
+                <svg class="w-20 h-20 animate-bounce mx-auto mt-28" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="section my-10" id="section-2">
+        <h1 class="text-8xl text-black mt-10 z-10 absolute">Einleitung</h1>
+
+
+    </div>
+
+
+    <div class="section my-5" id="section-3">
+        <h1 class="text-8xl text-white mt-10 z-10 absolute ml-1">Facts über die überschwemmung</h1>
+
+        <div class="video-wrapper-medium">
+            <video autoplay muted loop>
+                <source src="assets/flood-2005.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="section my-5" id="section-4">
+        <h1 class="text-8xl text-white mt-10 z-10 absolute ml-1">Durch klima verursacht?</h1>
+
+        <div class="video-wrapper-light">
+            <video autoplay muted loop>
+                <source src="assets/tdat.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="section my-5" id="section-5">
+        <h1 class="text-8xl text-white mt-10 z-10 absolute ml-1">Wie gehts weiter?</h1>
+
+        <div class="video-wrapper-light">
+            <video autoplay muted loop>
+                <source src="assets/tdat.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="section my-5" id="section-6">
+        <h1 class="text-8xl text-black mt-10 absolute ml-1">About & Sources</h1>
+
+    </div>
+</div>
+
+
+</body>
+</html>
