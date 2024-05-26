@@ -14,7 +14,7 @@
     }
 
     .content {
-        scroll-snap-type: y mandatory;
+       scroll-snap-type: y mandatory;
         scroll-behavior: smooth;
         overflow: auto;
         position: relative;
@@ -24,11 +24,14 @@
 
     .section {
         width: 100%;
-        height: 100vh;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
         scroll-snap-align: start;
     }
 
     #section-2 {
+
         /*
         linear gradient background image meteo.png
         */
@@ -37,18 +40,6 @@
         background-size: cover;
         background-repeat: no-repeat;
         box-shadow: inset 1em -1em 10em 10em rgb(254 243 199);
-    }
-
-    #section-3 {
-        position: relative;
-    }
-
-    #section-4 {
-        position: relative;
-    }
-
-    #section-5 {
-        position: relative;
     }
 
     /*
@@ -141,8 +132,8 @@
 <div class="content">
     <div class="section my-10 py-32 flex items-center justify-center" id="section-1">
         <div>
-            <h1 class="text-center italic md:text-9xl sm:text-8xl text-6xl font-semibold tracking-widest">Fluten durch Klimawandel?</h1>
-            <h2 class="text-center mt-4 text-2xl font-semibold tracking-wider italic">Wie der Klimawandel Flutkatastrophen
+            <h1 class="text-center italic md:text-9xl sm:text-8xl text-7xl font-semibold tracking-widest">Fluten durch Klimawandel?</h1>
+            <h2 class="text-center mt-4 text-5xl font-semibold tracking-wider italic w-5/6 mx-auto">Wie der Klimawandel Flutkatastrophen
                 verursacht.</h2>
             <a href="#section-2">
                 <svg class="w-20 h-20 animate-bounce mx-auto mt-28" fill="none" stroke="currentColor"
@@ -153,15 +144,15 @@
         </div>
     </div>
 
-    <div class="section my-10" id="section-2">
-        <h1 class="text-8xl text-black mt-10 z-10 absolute">Einleitung</h1>
+    <div class="section" id="section-2">
+        <h1 class="text-9xl text-black mt-10 z-10 absolute ml-1 w-5/6">Einleitung</h1>
 
 
     </div>
 
 
-    <div class="section my-5" id="section-3">
-        <h1 class="text-8xl text-white mt-10 z-10 absolute ml-1">Facts über die überschwemmung</h1>
+    <div class="section" id="section-3">
+        <h1 class="text-9xl text-white mt-10 z-10 absolute ml-1 w-5/6">Facts</h1>
 
         <div class="video-wrapper-medium">
             <video autoplay muted loop>
@@ -172,7 +163,7 @@
     </div>
 
     <div class="section my-5" id="section-4">
-        <h1 class="text-8xl text-white mt-10 z-10 absolute ml-1">Durch klima verursacht?</h1>
+        <h1 class="text-9xl text-white mt-10 z-10 absolute ml-1 w-5/6">Verursacher?</h1>
 
         <div class="video-wrapper-light">
             <video autoplay muted loop>
@@ -183,7 +174,7 @@
     </div>
 
     <div class="section my-5" id="section-5">
-        <h1 class="text-8xl text-white mt-10 z-10 absolute ml-1">Wie gehts weiter?</h1>
+        <h1 class="text-9xl text-white mt-10 z-10 absolute ml-1 w-5/6">Wie weiter?</h1>
 
         <div class="video-wrapper-light">
             <video autoplay muted loop>
@@ -194,7 +185,7 @@
     </div>
 
     <div class="section my-5" id="section-6">
-        <h1 class="text-8xl text-black mt-10 absolute ml-1">About & Sources</h1>
+        <h1 class="text-9xl text-black mt-10 absolute ml-1 w-5/6">About & Sources</h1>
 
     </div>
 </div>
