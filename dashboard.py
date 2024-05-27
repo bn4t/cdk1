@@ -1,10 +1,11 @@
 import dash
 from dash import dcc, html, dash_table
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
+import statsmodels.api as sm
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-import plotly.graph_objects as go
 
 # Load data
 flood_data = pd.read_csv('./flood_data.csv', sep=',')
@@ -13,7 +14,7 @@ regions_data = pd.read_csv('./regions_ch.csv', sep=',')
 
 # Print column names to verify them
 print("Flood Data Columns:", flood_data.columns)
-print("Rain Data Columns:", rain_data.columns)
+print("Rain Data Columns:", flood_data.columns)
 print("Regions Data Columns:", regions_data.columns)
 
 # Display the first few rows of the flood_data
@@ -38,48 +39,80 @@ flood_data = pd.merge(flood_data, regions_data, on=['Latitude', 'Longitude'], ho
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div(
-    style={
-        'background-image': 'url("/assets/ch_background.png")',
-        'background-size': 'cover',
-        'background-repeat': 'no-repeat',
-        'background-attachment': 'fixed',
-        'height': '100vh',  # Ensure the background covers the entire viewport height
-        'width': '100vw',   # Ensure the background covers the entire viewport width
-        'overflow': 'hidden',  # Ensure content doesn't overflow the viewport
-    },
+    style={'position': 'relative', 'height': '100vh', 'width': '100vw', 'overflow': 'hidden'},
     children=[
+        html.Div(
+            style={
+                'position': 'absolute', 'top': '0', 'left': '0', 'width': '100%', 'height': '100%', 'z-index': '-1',
+                'overflow': 'hidden', 'filter': 'grayscale(100%)'
+            },
+            children=[
+                html.Iframe(
+                    src="https://www.youtube.com/embed/oDK0FNisfDg?autoplay=1&loop=1&playlist=oDK0FNisfDg&controls=0&mute=1",
+                    style={
+                        'position': 'absolute', 'top': '0', 'left': '0', 'width': '100vw', 'height': '100vh', 'border': 'none',
+                        'transform': 'scale(1.5)', 'transform-origin': 'center'
+                    }
+                )
+            ]
+        ),
         dbc.Container([
             dbc.Row([
-                dbc.Col(html.H1("Dashboard", className="text-center mt-3", style={'color': 'white'}), width=12),
-                dbc.Col(html.H3("Klimadaten Challenge 2024", className="text-center text-muted", style={'color': 'white'}), width=12),
-                dbc.Col(html.H4("Benjamin, Boran und Murat", className="text-center text-muted mb-4", style={'color': 'white'}), width=12)
+                dbc.Col(html.H1("Klimakrise und Flutgefahr: Die Unterschätzte Bedrohung der Erderwärmung", className="text-center mt-3", style={'color': '#fef3c7'}), width=12),
+                dbc.Col(html.H3("Klimadaten Challenge 2024", className="text-center text-muted", style={'color': '#fef3c7'}), width=12),
+                dbc.Col(html.H4("Benjamin, Boran und Murat", className="text-center text-muted mb-4", style={'color': '#fef3c7'}), width=12)
             ]),
             dbc.Row([
                 dbc.Col([
-                    dcc.Graph(id='map-plot', style={'background-color': 'rgba(255, 255, 255, 0.8)', 'border-radius': '10px', 'padding': '10px'}),
+                    dcc.Graph(id='map-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}),
                     html.Br(),  # Add a line break for spacing
                     dcc.Slider(
                         id='year-slider',
                         min=flood_data['Year'].min(),
                         max=flood_data['Year'].max(),
                         value=flood_data['Year'].max(),
-                        marks={str(year): {'label': str(year), 'style': {'transform': 'rotate(45deg)', 'white-space': 'nowrap', 'color': 'red'}} for year in flood_data['Year'].unique()},
+                        marks={str(year): {'label': str(year), 'style': {'transform': 'rotate(45deg)', 'white-space': 'nowrap', 'color': '#fef3c7'}} for year in flood_data['Year'].unique()},
                         step=None
                     ),
                     html.Br(),  # Add another line break for more spacing
+                    html.H5("Überschwemmungen", style={'color': '#fef3c7'}),  # Add table title in desired color
                     dash_table.DataTable(
                         id='flood-table',
                         columns=[
                             {'name': 'Location', 'id': 'location'},
                             {'name': 'Start Date', 'id': 'Start date'},
-                            {'name': 'End Date', 'id': 'End date'},
-                            {'name': 'Precipitation (mm)', 'id': 'precipitation'}
+                            {'name': 'End Date', 'id': 'End date'}
                         ],
-                        style_table={'overflowX': 'auto'},
-                        style_cell={'textAlign': 'left'},
-                        style_header={'backgroundColor': 'rgba(255, 255, 255, 0.8)'},
-                        style_data={'backgroundColor': 'rgba(255, 255, 255, 0.8)'},
+                        style_table={'overflowX': 'auto', 'border': '1px solid black'},
+                        style_cell={'textAlign': 'left', 'backgroundColor': '#fef3c7', 'color': 'black', 'border': '1px solid black'},
+                        style_header={'backgroundColor': '#fef3c7', 'border': '1px solid black'},
+                        style_data={'backgroundColor': '#fef3c7', 'border': '1px solid black'},
                         style_as_list_view=True
+                    ),
+                    html.Br(),
+                    html.H5("Schäden und Verluste", style={'color': '#fef3c7'}),  # Add title for new table
+                    dash_table.DataTable(
+                        id='damage-table',
+                        columns=[
+                            {'name': 'Location', 'id': 'location'},
+                            {'name': 'Fatalities', 'id': 'Fatalities', 'type': 'numeric'},
+                            {'name': 'Losses (mln EUR, 2020)', 'id': 'Losses (mln EUR, 2020)', 'type': 'numeric'}
+                        ],
+                        style_table={'overflowX': 'auto', 'border': '1px solid black'},
+                        style_cell={'textAlign': 'center', 'backgroundColor': '#fef3c7', 'color': 'black', 'border': '1px solid black'},
+                        style_header={'backgroundColor': '#fef3c7', 'border': '1px solid black'},
+                        style_data_conditional=[
+                            {'if': {'column_id': 'Fatalities'}, 'textAlign': 'center'},
+                            {'if': {'column_id': 'Losses (mln EUR, 2020)'}, 'textAlign': 'center'},
+                            {'if': {'column_id': 'location'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
+                            {'if': {'column_id': 'Fatalities'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
+                            {'if': {'column_id': 'Losses (mln EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}
+                        ],
+                        style_header_conditional=[
+                            {'if': {'column_id': 'location'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
+                            {'if': {'column_id': 'Fatalities'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
+                            {'if': {'column_id': 'Losses (mln EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}
+                        ]
                     )
                 ], width=6, lg=6),  # Karte und Slider links
                 dbc.Col([
@@ -88,23 +121,53 @@ app.layout = html.Div(
                             dcc.Dropdown(
                                 id='country-dropdown',
                                 options=[{'label': country, 'value': country} for country in flood_data['Country name'].unique()],
-                                value='Germany',  # Standardwert
-                                clearable=False,
-                                style={'background-color': 'rgba(255, 255, 255, 0.8)'}
+                                value=None,  # No default value
+                                clearable=True,
+                                placeholder="Select a country",
+                                style={'background-color': '#fef3c7'}
                             ),
                             width=12
                         ),
                     ),
+                    dbc.Row([
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id='timeframe-dropdown',
+                                options=[
+                                    {'label': 'Täglich', 'value': 'D'},
+                                    {'label': 'Wöchentlich', 'value': 'W'},
+                                    {'label': 'Monatlich', 'value': 'M'}
+                                ],
+                                value='D',  # Standardwert
+                                clearable=False,
+                                style={'background-color': '#fef3c7'}
+                            ),
+                            width=6
+                        )
+                    ]),
                     dbc.Row(
-                        dbc.Col(dcc.Graph(id='precipitation-plot', style={'background-color': 'rgba(255, 255, 255, 0.8)', 'border-radius': '10px', 'padding': '10px'}), width=12),
+                        dbc.Col(dcc.Graph(id='precipitation-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}), width=12),
                     ),
                     dbc.Row(
-                        dbc.Col(dcc.Graph(id='temperature-plot', style={'background-color': 'rgba(255, 255, 255, 0.8)', 'border-radius': '10px', 'padding': '10px'}), width=12),
+                        dbc.Col(dcc.Graph(id='scatter-plot-temp-precip', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}), width=12),
                     ),
                     dbc.Row(
-                        dbc.Col(dcc.Graph(id='boxplot-plot', style={'background-color': 'rgba(255, 255, 255, 0.8)', 'border-radius': '10px', 'padding': '10px'}), width=12),
+                        dbc.Col(dcc.Graph(id='scatter-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}), width=12),
                     )
                 ], width=6, lg=6)  # Grafen rechts
+            ]),
+            dbc.Row([
+                dbc.Col(
+                    html.Div(
+                        [
+                            html.H6("Sources:", style={'color': '#fef3c7'}),
+                            html.A("Natural Hazards Europe", href="https://naturalhazards.eu/", target="_blank", style={'color': '#fef3c7'}),
+                            html.Br(),
+                            html.A("European Commission Authentication Service", href="https://ecas.ec.europa.eu/cas/login?loginRequestId=ECAS_LR-22393326-Lssax9p7FwCWzIt1zx7JwFBWmUqNZEJaTzzfKZNbKRV0rVaStudi9zdBPQsZ7Xkw58VlITEgaf8rpeXfGnUHvXZ-yntOf97TTHqxVxzLXeLDP6-Jb1Kl6AzMyAzXYuaIzmyg5uCkZSpbzezx2Big1GzIcQetJDGTrumP0hQcm7SdYfHO8ao5HDpjJDY6zsTrcbCXrN8", target="_blank", style={'color': '#fef3c7'})
+                        ],
+                        className="text-center mt-3"
+                    )
+                )
             ])
         ], fluid=True, style={'height': '90vh', 'overflowY': 'scroll'})
     ]
@@ -113,23 +176,46 @@ app.layout = html.Div(
 @app.callback(
     Output('map-plot', 'figure'),
     Output('flood-table', 'data'),
-    Input('year-slider', 'value')
+    Output('damage-table', 'data'),
+    Input('year-slider', 'value'),
+    Input('country-dropdown', 'value')
 )
-def update_map(year):
+def update_map(year, country):
     # Filter data only by the selected year
     filtered_data = flood_data[flood_data['Year'] == year]
     
+    # Check if a country is selected and filter accordingly
+    if country:
+        filtered_data = filtered_data[filtered_data['Country name'] == country]
+    
+    # Define map center and zoom level based on the selected country
+    if country == 'Switzerland':
+        map_center = {'lat': 46.8182, 'lon': 8.2275}
+        zoom_level = 6
+    else:
+        # Default center to Europe and zoom out if not Switzerland or no country selected
+        map_center = {'lat': 50.1109, 'lon': 8.6821}
+        zoom_level = 3 if not country else 6
+    
+    # Replace NaN values in 'Losses (mln EUR, 2020)' with a placeholder for losses under 1 million EUR
+    filtered_data['Losses (mln EUR, 2020)'] = filtered_data['Losses (mln EUR, 2020)'].fillna('< 1 mln EUR')
+    
+    # Determine marker size based on losses
+    filtered_data['marker_size'] = filtered_data.apply(lambda row: max(10, row['Losses (mln EUR, 2020)'] / 10) if row['Losses (mln EUR, 2020)'] != '< 1 mln EUR' else 10, axis=1)
+
     # Check if there is data to plot
     if (filtered_data.empty) or ('Name' not in filtered_data.columns):
         fig = go.Figure()
         fig.update_layout(mapbox_style="carto-darkmatter")
         fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+        fig.update_layout(mapbox=dict(center=map_center, zoom=zoom_level))
         fig.add_annotation(
             x=0.5, y=0.5, text="No data available for this selection",
             showarrow=False, font=dict(size=20, color="white"),
             xref="paper", yref="paper"
         )
-        table_data = []
+        flood_table_data = []
+        damage_table_data = []
     else:
         # Plot data if available
         fig = px.scatter_mapbox(
@@ -137,39 +223,111 @@ def update_map(year):
             lat="Latitude", 
             lon="Longitude", 
             hover_name="Name",  # Use the region name for hover info
-            color_discrete_sequence=["fuchsia"], 
-            zoom=3, 
+            size='marker_size' if country else None,  # Adjust size only if a country is selected
+            size_max=30,
+            color_discrete_sequence=["black"], 
+            zoom=zoom_level, 
             height=500
         )
         # Remove latitude and longitude from hover data
+        fig.update_traces(marker=dict(opacity=0.5 if country else 1.0))  # Adjust opacity only if a country is selected
         fig.update_traces(hovertemplate='<b>%{hovertext}</b>')
         fig.update_layout(mapbox_style="carto-positron")
         fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+        fig.update_layout(mapbox=dict(center=map_center, zoom=zoom_level))
         
-        # Prepare table data
-        table_data = filtered_data[['Name', 'Start date', 'End date']].copy()  # Adjusted column names
-        table_data['precipitation'] = table_data.apply(lambda row: rain_data[(rain_data['DAY'] >= row['Start date']) & (rain_data['DAY'] <= row['End date'])]['PRECIPITATION'].sum(), axis=1)
-        table_data = table_data.rename(columns={'Name': 'location', 'Start date': 'Start date', 'End date': 'End date', 'precipitation': 'precipitation'}).to_dict('records')
+        # Prepare flood table data
+        flood_table_data = filtered_data[['Name', 'Start date', 'End date']].copy()  # Adjusted column names
+        flood_table_data = flood_table_data.rename(columns={'Name': 'location', 'Start date': 'Start date', 'End date': 'End date'}).to_dict('records')
+        
+        # Prepare damage table data
+        damage_data = filtered_data[['Name', 'Fatalities', 'Losses (mln EUR, 2020)']].copy()
+        damage_data['Fatalities'] = damage_data['Fatalities'].fillna('None')
+        damage_grouped = damage_data.groupby(['Fatalities', 'Losses (mln EUR, 2020)']).agg({'Name': ', '.join}).reset_index()
+        damage_grouped = damage_grouped.rename(columns={'Name': 'location'})
+        damage_table_data = damage_grouped.to_dict('records')
     
-    return fig, table_data
+    return fig, flood_table_data, damage_table_data
 
 @app.callback(
     Output('precipitation-plot', 'figure'),
-    Output('temperature-plot', 'figure'),
-    Output('boxplot-plot', 'figure'),
-    Input('year-slider', 'value')
+    Output('scatter-plot-temp-precip', 'figure'),
+    Output('scatter-plot', 'figure'),
+    Input('year-slider', 'value'),
+    Input('timeframe-dropdown', 'value')
 )
-def update_charts(year):
+def update_charts(year, timeframe):
     filtered_data = rain_data[rain_data['DAY'].dt.year == year]
     
-    # Ensure only one data point per day
-    filtered_data = filtered_data.groupby('DAY').mean().reset_index()
+    if timeframe == 'D':
+        filtered_data = filtered_data.groupby('DAY').mean().reset_index()
+    elif timeframe == 'W':
+        filtered_data = filtered_data.resample('W-Mon', on='DAY').mean().reset_index()
+    elif timeframe == 'M':
+        filtered_data = filtered_data.resample('M', on='DAY').mean().reset_index()
+
+    # Precipitation bar plot
+    precipitation_fig = px.bar(
+        filtered_data, 
+        x='DAY', 
+        y='PRECIPITATION', 
+        title=f'{timeframe}-Niederschlag (mm)', 
+        labels={'PRECIPITATION': 'Niederschlag (mm)'},  # Add unit to y-axis label
+        color_discrete_sequence=['#000080']  # Marineblau
+    )
+    precipitation_fig.update_layout(
+        plot_bgcolor='#FFFFFF', 
+        paper_bgcolor='#fef3c7',
+        xaxis=dict(showgrid=True, gridcolor='grey'),
+        yaxis=dict(showgrid=True, gridcolor='grey')
+    )
     
-    precipitation_fig = px.histogram(filtered_data, x='DAY', y='PRECIPITATION', title='Niederschlag', color_discrete_sequence=['#00ccff'])
-    temperature_fig = px.line(filtered_data, x='DAY', y='TEMPERATURE_AVG', title='Durchschnittstemperatur', color_discrete_sequence=['#ff3300'])
-    boxplot_fig = px.box(filtered_data, y='PRECIPITATION', title='Precipitation Boxplot', color_discrete_sequence=['#00ccff'])
+    # Scatter plot with temperature vs. precipitation
+    scatter_fig_temp_precip = px.scatter(
+        filtered_data, 
+        x='TEMPERATURE_AVG', 
+        y='PRECIPITATION', 
+        title='Durchschnittstemperatur (°C) vs. Niederschlag (mm)', 
+        labels={'TEMPERATURE_AVG': 'Durchschnittstemperatur (°C)', 'PRECIPITATION': 'Niederschlag (mm)'},  # Add units to labels
+        color_discrete_sequence=['#000080']  # Marineblau
+    )
+    scatter_fig_temp_precip.update_layout(
+        plot_bgcolor='#FFFFFF', 
+        paper_bgcolor='#fef3c7',
+        xaxis=dict(showgrid=True, gridcolor='grey'),
+        yaxis=dict(showgrid=True, gridcolor='grey')
+    )
     
-    return precipitation_fig, temperature_fig, boxplot_fig
+    # Scatter plot with linear regression
+    scatter_fig = px.scatter(
+        filtered_data, 
+        x='TEMPERATURE_AVG', 
+        y='PRECIPITATION', 
+        title='Durchschnittstemperatur (°C) vs. Niederschlag (mm) (mit Regression)', 
+        labels={'TEMPERATURE_AVG': 'Durchschnittstemperatur (°C)', 'PRECIPITATION': 'Niederschlag (mm)'},  # Add units to labels
+        color_discrete_sequence=['#000080']  # Marineblau
+    )
+    scatter_fig.update_layout(
+        plot_bgcolor='#FFFFFF', 
+        paper_bgcolor='#fef3c7',
+        xaxis=dict(showgrid=True, gridcolor='grey'),
+        yaxis=dict(showgrid=True, gridcolor='grey')
+    )
+    
+    # Add linear regression line
+    X = sm.add_constant(filtered_data['TEMPERATURE_AVG'])
+    model = sm.OLS(filtered_data['PRECIPITATION'], X).fit()
+    scatter_fig.add_trace(
+        go.Scatter(
+            x=filtered_data['TEMPERATURE_AVG'],
+            y=model.predict(X),
+            mode='lines',
+            name='Linear Regression',
+            line=dict(color='red')  # Set the regression line color to red
+        )
+    )
+    
+    return precipitation_fig, scatter_fig_temp_precip, scatter_fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
