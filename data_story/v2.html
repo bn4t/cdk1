@@ -101,7 +101,7 @@
         pointer-events: none;
         background-size: 14px 10px, 14px 10px;
         background-position: 0, 7px 0px;
-        background-image: radial-gradient(circle, rgba(255, 255, 255, 0) 20%, #000), radial-gradient(circle, rgba(255, 255, 255, 0) 20%, #000);
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0) 15%, #000), radial-gradient(circle, rgba(255, 255, 255, 0) 15%, #000);
         mix-blend-mode: multiply;
     }
 
@@ -125,6 +125,29 @@
         background-color: rgb(254 243 199);
         mix-blend-mode: multiply;
     }
+
+    mark {
+        background: linear-gradient(
+                100deg,
+                rgba(255, 221, 64, 0) 0.9%,
+                rgba(255, 221, 64, 1) 2.4%,
+                rgba(255, 221, 64, 0.6) 5.8%,
+                rgba(255, 221, 64, 0.4) 93%,
+                rgba(255, 221, 64, 0.7) 96%,
+                rgba(255, 221, 64, 0) 98%
+        ),
+        linear-gradient(
+                180deg,
+                rgba(255, 221, 64, 0) 0%,
+                rgba(255, 221, 64, 0.3) 7.9%,
+                rgba(255, 221, 64, 0) 15%
+        );
+        border-radius: 0.125em;
+        box-decoration-break: clone;
+        padding: 0.125em 0.25em;
+    }
+
+
 </style>
 
 <body class="bg-amber-100 subpixel-antialiased">
@@ -147,17 +170,17 @@
     </div>
 
     <div class="section" id="section-2">
-        <div class="mt-10 z-10 text-black absolute ml-1 w-full">
+        <div class="mt-10 ml-3 z-10 text-black absolute w-full">
             <h1 class="text-9xl w-5/6">Einleitung</h1>
-            <div class="flex flex-wrap items-start justify-between lg:mt-10 mt-20 pr-20">
+            <div class="flex flex-wrap items-start justify-between lg:mt-10 mt-20 pr-20 pl-1">
                 <div class="lg:w-3/5 lg:text-4xl md:text-5xl w-full text-7xl">
-                    <p>Im August 2005 ereignete sich eine
-                        verheerende Flut entlang der Aare, die durch aussergewöhnlich starke und anhaltende Regenfälle
+                    <p>Im <mark>August 2005</mark> ereignete sich eine
+                        <mark>verheerende Flut</mark> entlang der Aare, die durch aussergewöhnlich starke und anhaltende Regenfälle
                         ausgelöst wurde.</p>
                     <p class="lg:mt-3 mt-10">
-                        Dieses Extremwetterereignis wird als eine der gravierendsten Fluten der
+                        <mark>Dieses Extremwetterereignis</mark> wird als eine der gravierendsten Fluten der
                         letzten
-                        Jahrzehnte in der Schweiz betrachtet und ist ein Beispiel dafür, wie der Klimawandel die
+                        Jahrzehnte in der Schweiz betrachtet und ist ein Beispiel dafür, wie der <mark>Klimawandel</mark> die
                         Häufigkeit
                         und Intensität solcher Naturkatastrophen verstärkt.</p>
                 </div>
@@ -171,15 +194,15 @@
 
     <div class="section" id="section-3">
 
-        <div class="mt-10 z-10 text-white absolute ml-1 w-full">
+        <div class="mt-10 z-10 text-white absolute w-full ml-3">
             <h1 class="text-9xl w-5/6">Schaden</h1>
-            <div class="flex flex-wrap items-start justify-between mt-10 pr-20">
+            <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
                 <div class="w-3/5 text-4xl">
-                    <p>Die Überschwemmungen verursachten Schäden in Höhe von etwa 2,5 Milliarden Franken.</p>
-                    <p class="mt-3">Die Flut betraf 17 Kantone, wobei sechs Menschen
+                    <p>Die Überschwemmungen verursachten Schäden in Höhe von etwa <mark class="text-white">2,5 Milliarden Franken</mark>.</p>
+                    <p class="mt-3">Die Flut betraf <mark class="text-white">17 Kantone</mark>, wobei <mark class="text-white">sechs Menschen</mark>
                         ihr Leben verloren. Die zerstörerischen Kräfte des Wassers führten zu erheblichen Schäden an
                         Gebäuden, Infrastruktur und landwirtschaftlichen Flächen. Besonders betroffen waren die Kantone
-                        Bern, Glarus und Uri.</p>
+                        <mark class="text-white">Bern, Glarus und Uri</mark>.</p>
                 </div>
                 <div class="w-2/5 px-5">
                     <img src="assets/schaden-2005.png" class="rounded-xl">
@@ -196,17 +219,17 @@
     </div>
 
     <div class="section" id="section-4">
-        <div class="mt-10 z-10 text-white absolute ml-1 w-full">
+        <div class="mt-10 z-10 text-white absolute w-full ml-3">
             <h1 class="text-9xl w-5/6">Ursache</h1>
 
-            <div class="flex flex-wrap items-start justify-between mt-10 pr-20">
+            <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
                 <div class="w-3/5 text-4xl">
                     <p>Die Flut wurde durch eine ungewöhnliche
-                        meteorologische Konstellation ausgelöst, die als Vb-Wetterlage bekannt ist. Diese führte zu
+                        meteorologische Konstellation ausgelöst, die als <mark class="text-white">Vb-Wetterlage</mark> bekannt ist. Diese führte zu
                         intensiven Niederschlägen, die die bereits gesättigten Böden nicht mehr aufnehmen konnten.
                     </p>
                     <p class="mt-3">
-                        Zudem stieg die Schneefallgrenze über 3000 Meter, sodass zusätzlicher Niederschlag als Regen abfloss.
+                        Zudem stieg die Schneefallgrenze <mark class="text-white">über 3000 Meter</mark>, sodass <mark class="text-white">zusätzlicher Niederschlag als Regen</mark> abfloss.
                         Diese extremen Wetterbedingungen, die in Zusammenhang mit dem Klimawandel stehen, erhöhen die
                         Wahrscheinlichkeit und Schwere solcher Hochwasserereignisse.</p>
                 </div>
@@ -224,37 +247,25 @@
     </div>
 
     <div class="section" id="section-5">
-        <div class="mt-10 z-10 text-white absolute ml-1 w-full">
+        <div class="mt-10 z-10 text-white absolute ml-3 w-full">
             <h1 class="text-9xl w-5/6">Wie Weiter?</h1>
 
-
-            <div class="flex flex-wrap items-start justify-between mt-10 pr-20">
+            <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
                 <div class="w-3/5 text-4xl">
-                    <p>Um zukünftige Schäden durch Hochwasser
-                        zu minimieren, ist eine Anpassung und Verstärkung der Hochwasserschutzmassnahmen notwendig.
+                    <p>Um <mark class="text-white">zukünftige Schäden durch Hochwasser</mark>
+                        zu minimieren, ist eine Anpassung und <mark class="text-white">Verstärkung der Hochwasserschutzmassnahmen</mark> notwendig.
                     </p>
                     <p class="mt-3">
                         Dies
-                        beinhaltet die Entwicklung und Umsetzung umfassender Präventionsstrategien, die Verbesserung von
-                        Gefahrenkarten und die Integration von Klimawandelprojektionen in die Planungen. Es ist
+                        beinhaltet die Entwicklung und Umsetzung umfassender <mark class="text-white">Präventionsstrategien</mark>, die Verbesserung von
+                        Gefahrenkarten und die Integration von <mark class="text-white">Klimawandelprojektionen</mark> in die Planungen. Es ist
                         entscheidend, dass die Erkenntnisse aus der Flut von 2005 genutzt werden, um die Resilienz gegenüber
-                        den durch den Klimawandel verursachten Extremwetterereignissen zu erhöhen.</p>
+                        den durch den <mark class="text-white">Klimawandel verursachten Extremwetterereignissen</mark> zu erhöhen.</p>
                 </div>
                 <div class="w-2/5 px-5">
                     <img src="assets/niederschlag-temperatur.png" class="rounded-xl">
                     <p class="text-sm text-center">Quelle: doi:10.1038/ngeo262</p>
                 </div>
-            </div>
-
-
-
-            <div class="flex flex-col absolute right-0 w-4/5">
-                <p class="lg:text-5xl text-7xl lg:mt-40 mt-72 mr-5 text-right ">Um zukünftige Schäden durch Hochwasser
-                    zu minimieren, ist eine Anpassung und Verstärkung der Hochwasserschutzmassnahmen notwendig. <br><br>Dies
-                    beinhaltet die Entwicklung und Umsetzung umfassender Präventionsstrategien, die Verbesserung von
-                    Gefahrenkarten und die Integration von Klimawandelprojektionen in die Planungen. <br><br>Es ist
-                    entscheidend, dass die Erkenntnisse aus der Flut von 2005 genutzt werden, um die Resilienz gegenüber
-                    den durch den Klimawandel verursachten Extremwetterereignissen zu erhöhen.</p>
             </div>
         </div>
 
@@ -267,16 +278,16 @@
     </div>
 
     <div class="section" id="section-6">
-        <div class="mt-10 z-10 text-black absolute ml-1 w-full">
+        <div class="mt-10 z-10 text-black absolute ml-3 w-full">
             <h1 class="text-9xl w-5/6">Quellen</h1>
-            <ul class="lg:text-5xl text-7xl mt-40 list-decimal">
+            <ul class="lg:text-5xl text-7xl mt-40 list-disc pl-10">
                 <li><a href="https://www.youtube.com/watch?v=x1SgmFa0r04" class="hover:underline" target="_blank">youtube.com/watch?v=x1SgmFa0r04</a>
                 </li>
                 <li><a href="https://www.youtube.com/watch?v=Ku_IseK3xTc" class="hover:underline" target="_blank">youtube.com/watch?v=Ku_IseK3xTc</a>
                 </li>
                 <li><a href="https://www.youtube.com/watch?v=4GrfJB52ouc" class="hover:underline" target="_blank">youtube.com/watch?v=4GrfJB52ouc</a>
                 </li>
-                <li><a href="http://www.nature.com/doifinder/10.1038/ngeo262">doi:10.1038/ngeo262</a></li>
+                <li><a href="http://www.nature.com/doifinder/10.1038/ngeo262" class="hover:underline">doi:10.1038/ngeo262</a></li>
                 <li>Bundesamt für Wasser und Geologie</li>
             </ul>
         </div>
