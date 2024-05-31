@@ -3,7 +3,7 @@ from dash import dcc, html, dash_table
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-import statsmodels.api as sm
+import numpy as np
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
@@ -22,6 +22,10 @@ print(flood_data.head())
 
 # Convert 'DAY' column to datetime
 rain_data['DAY'] = pd.to_datetime(rain_data['DAY'], format='%d.%m.%Y')
+
+# Convert 'Start date' and 'End date' columns to datetime
+flood_data['Start date'] = pd.to_datetime(flood_data['Start date'], format='%d.%m.%Y')
+flood_data['End date'] = pd.to_datetime(flood_data['End date'], format='%d.%m.%Y')
 
 # Extract Latitude and Longitude from the 'regions' column in flood_data
 flood_data[['Latitude', 'Longitude']] = flood_data['regions'].str.strip('[]()').str.split(',', expand=True)
@@ -147,12 +151,6 @@ app.layout = html.Div(
                     ]),
                     dbc.Row(
                         dbc.Col(dcc.Graph(id='precipitation-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}), width=12),
-                    ),
-                    dbc.Row(
-                        dbc.Col(dcc.Graph(id='scatter-plot-temp-precip', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}), width=12),
-                    ),
-                    dbc.Row(
-                        dbc.Col(dcc.Graph(id='scatter-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}), width=12),
                     )
                 ], width=6, lg=6)  # Grafen rechts
             ]),
@@ -251,8 +249,6 @@ def update_map(year, country):
 
 @app.callback(
     Output('precipitation-plot', 'figure'),
-    Output('scatter-plot-temp-precip', 'figure'),
-    Output('scatter-plot', 'figure'),
     Input('year-slider', 'value'),
     Input('timeframe-dropdown', 'value')
 )
@@ -266,6 +262,13 @@ def update_charts(year, timeframe):
     elif timeframe == 'M':
         filtered_data = filtered_data.resample('M', on='DAY').mean().reset_index()
 
+    # Add a column to indicate if the date falls within any flood event
+    flood_periods = flood_data[['Start date', 'End date']].dropna()
+    filtered_data['In_Flood_Period'] = filtered_data['DAY'].apply(lambda day: any((day >= start) and (day <= end) for start, end in zip(flood_periods['Start date'], flood_periods['End date'])))
+
+    # Map True/False to 'Überschwemmung'/'Niederschläge'
+    filtered_data['In_Flood_Period'] = filtered_data['In_Flood_Period'].map({True: 'Überschwemmung', False: 'Niederschläge'})
+
     # Precipitation bar plot
     precipitation_fig = px.bar(
         filtered_data, 
@@ -273,7 +276,8 @@ def update_charts(year, timeframe):
         y='PRECIPITATION', 
         title=f'{timeframe}-Niederschlag (mm)', 
         labels={'PRECIPITATION': 'Niederschlag (mm)'},  # Add unit to y-axis label
-        color_discrete_sequence=['#000080']  # Marineblau
+        color='In_Flood_Period',  # Color based on whether it's in a flood period
+        color_discrete_map={'Überschwemmung': 'red', 'Niederschläge': '#000080'}  # Red for flood periods, navy blue otherwise
     )
     precipitation_fig.update_layout(
         plot_bgcolor='#FFFFFF', 
@@ -282,52 +286,7 @@ def update_charts(year, timeframe):
         yaxis=dict(showgrid=True, gridcolor='grey')
     )
     
-    # Scatter plot with temperature vs. precipitation
-    scatter_fig_temp_precip = px.scatter(
-        filtered_data, 
-        x='TEMPERATURE_AVG', 
-        y='PRECIPITATION', 
-        title='Durchschnittstemperatur (°C) vs. Niederschlag (mm)', 
-        labels={'TEMPERATURE_AVG': 'Durchschnittstemperatur (°C)', 'PRECIPITATION': 'Niederschlag (mm)'},  # Add units to labels
-        color_discrete_sequence=['#000080']  # Marineblau
-    )
-    scatter_fig_temp_precip.update_layout(
-        plot_bgcolor='#FFFFFF', 
-        paper_bgcolor='#fef3c7',
-        xaxis=dict(showgrid=True, gridcolor='grey'),
-        yaxis=dict(showgrid=True, gridcolor='grey')
-    )
-    
-    # Scatter plot with linear regression
-    scatter_fig = px.scatter(
-        filtered_data, 
-        x='TEMPERATURE_AVG', 
-        y='PRECIPITATION', 
-        title='Durchschnittstemperatur (°C) vs. Niederschlag (mm) (mit Regression)', 
-        labels={'TEMPERATURE_AVG': 'Durchschnittstemperatur (°C)', 'PRECIPITATION': 'Niederschlag (mm)'},  # Add units to labels
-        color_discrete_sequence=['#000080']  # Marineblau
-    )
-    scatter_fig.update_layout(
-        plot_bgcolor='#FFFFFF', 
-        paper_bgcolor='#fef3c7',
-        xaxis=dict(showgrid=True, gridcolor='grey'),
-        yaxis=dict(showgrid=True, gridcolor='grey')
-    )
-    
-    # Add linear regression line
-    X = sm.add_constant(filtered_data['TEMPERATURE_AVG'])
-    model = sm.OLS(filtered_data['PRECIPITATION'], X).fit()
-    scatter_fig.add_trace(
-        go.Scatter(
-            x=filtered_data['TEMPERATURE_AVG'],
-            y=model.predict(X),
-            mode='lines',
-            name='Linear Regression',
-            line=dict(color='red')  # Set the regression line color to red
-        )
-    )
-    
-    return precipitation_fig, scatter_fig_temp_precip, scatter_fig
+    return precipitation_fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
