@@ -235,7 +235,9 @@ def update_map(year, country):
         fig.update_layout(mapbox=dict(center=map_center, zoom=zoom_level))
         
         # Prepare flood table data
-        flood_table_data = filtered_data[['Name', 'Start date', 'End date']].copy()  # Adjusted column names
+        flood_table_data = filtered_data[['Name', 'Start date', 'End date']].copy()
+        flood_table_data['Start date'] = flood_table_data['Start date'].dt.strftime('%d.%m.%Y')
+        flood_table_data['End date'] = flood_table_data['End date'].dt.strftime('%d.%m.%Y')
         flood_table_data = flood_table_data.rename(columns={'Name': 'location', 'Start date': 'Start date', 'End date': 'End date'}).to_dict('records')
         
         # Prepare damage table data
@@ -257,10 +259,13 @@ def update_charts(year, timeframe):
     
     if timeframe == 'D':
         filtered_data = filtered_data.groupby('DAY').mean().reset_index()
+        y_label = 'Niederschlag (mm/Tag)'
     elif timeframe == 'W':
         filtered_data = filtered_data.resample('W-Mon', on='DAY').mean().reset_index()
+        y_label = 'Niederschlag (mm/Woche)'
     elif timeframe == 'M':
         filtered_data = filtered_data.resample('M', on='DAY').mean().reset_index()
+        y_label = 'Niederschlag (mm/Monat)'
 
     # Add a column to indicate if the date falls within any flood event
     flood_periods = flood_data[['Start date', 'End date']].dropna()
@@ -274,8 +279,8 @@ def update_charts(year, timeframe):
         filtered_data, 
         x='DAY', 
         y='PRECIPITATION', 
-        title=f'{timeframe}-Niederschlag (mm)', 
-        labels={'PRECIPITATION': 'Niederschlag (mm)'},  # Add unit to y-axis label
+        title=f'{timeframe}-Niederschlag', 
+        labels={'PRECIPITATION': y_label},  # Dynamische Achsenbeschriftung
         color='In_Flood_Period',  # Color based on whether it's in a flood period
         color_discrete_map={'Überschwemmung': 'red', 'Niederschläge': '#000080'}  # Red for flood periods, navy blue otherwise
     )
