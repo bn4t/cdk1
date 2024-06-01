@@ -3,15 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <title>Fluten durch Klimawandel? | Wie der Klimawandel Flutkatastrophen verursacht</title>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=bebas-neue:400" rel="stylesheet"/>
+    <script>
+        document.onreadystatechange = function() {
+            if (document.readyState !== "complete") {
+                document.querySelector("#content").style.visibility = "hidden";
+                document.querySelector("#loader").style.visibility = "visible";
+            } else {
+                document.querySelector("#loader").style.display = "none";
+                document.querySelector("#content").style.visibility = "visible";
+            }
+        };
+    </script>
 </head>
 <style>
+
     * {
         scroll-behavior: smooth;
         font-family: 'Bebas Neue', cursive;
     }
+
+    .loader {
+        margin-top: 20rem;
+        position: relative;
+    }
+
+    .outer,
+    .middle,
+    .inner {
+        border: 3px solid transparent;
+        border-top-color: #000000;
+        border-right-color: #000000;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+    }
+
+    .outer {
+        width: 3.5em;
+        height: 3.5em;
+        margin-left: -1.75em;
+        margin-top: -1.75em;
+        animation: spin 2s linear infinite;
+    }
+
+    .middle {
+        width: 2.1em;
+        height: 2.1em;
+        margin-left: -1.05em;
+        margin-top: -1.05em;
+        animation: spin 1.75s linear reverse infinite;
+    }
+
+    .inner {
+        width: 0.8em;
+        height: 0.8em;
+        margin-left: -0.4em;
+        margin-top: -0.4em;
+        animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+
 
     .content {
         scroll-snap-type: y mandatory;
@@ -150,9 +212,18 @@
 
 </style>
 
+
+
 <body class="bg-amber-100 subpixel-antialiased">
 
-<div class="content">
+<div class="loader" id="loader">
+    <div class="outer"></div>
+    <div class="middle"></div>
+    <div class="inner"></div>
+</div>
+
+
+<div class="content" id="content">
     <div class="section my-10 py-32 flex items-center justify-center" id="section-1">
         <div>
             <h1 class="text-center italic md:text-9xl sm:text-8xl text-7xl font-semibold tracking-widest">Fluten durch
