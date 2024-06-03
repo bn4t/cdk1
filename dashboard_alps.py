@@ -1,31 +1,34 @@
 import dash
 from dash import dcc, html, dash_table
 import plotly.express as px
-import plotly.graph_objects as go
 import pandas as pd
-import numpy as np
+import geopandas as gpd
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 # Load data
-flood_data = pd.read_csv('./flood_data_end.csv', sep=',')
-rain_data = pd.read_csv('./rain_data_total.csv', sep=',')
-regions_data = pd.read_csv('./regionscodes.csv', sep=',')
+flood_data = pd.read_csv('flood_data_end.csv', sep=',')
+rain_data = pd.read_csv('rain_data_alps.csv', sep=',')
+regions_data = pd.read_csv('regions_with_coordinates.csv', sep=',')
 
-# Print column names to verify them
-print("Flood Data Columns:", flood_data.columns)
-print("Rain Data Columns:", rain_data.columns)
-print("Regions Data Columns:", regions_data.columns)
+# Load country boundaries using geopandas
+countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
-# Display the first few rows of the flood_data
-print(flood_data.head())
+# Function to parse dates with multiple formats
+def parse_dates(dates, formats):
+    for fmt in formats:
+        try:
+            return pd.to_datetime(dates, format=fmt, errors='coerce')
+        except (ValueError, TypeError):
+            continue
+    return pd.to_datetime(dates, errors='coerce')  # Fallback to default parsing
 
-# Convert 'DAY' column to datetime
-rain_data['DAY'] = pd.to_datetime(rain_data['DAY'], format='%d.%m.%Y')
+# Parse 'DAY' column in rain_data with multiple formats
+rain_data['DAY'] = parse_dates(rain_data['DAY'], ['%d.%m.%Y', '%Y%m%d'])
 
-# Convert 'Start date' and 'End date' columns to datetime
-flood_data['Start date'] = pd.to_datetime(flood_data['Start date'], format='%d.%m.%Y')
-flood_data['End date'] = pd.to_datetime(flood_data['End date'], format='%d.%m.%Y')
+# Parse 'Start date' and 'End date' columns in flood_data with multiple formats
+flood_data['Start date'] = parse_dates(flood_data['Start date'], ['%d.%m.%Y', '%Y-%m-%d'])
+flood_data['End date'] = parse_dates(flood_data['End date'], ['%d.%m.%Y', '%Y-%m-%d'])
 
 # Extract Latitude and Longitude from the 'regions' column in flood_data
 flood_data[['Latitude', 'Longitude']] = flood_data['regions'].str.strip('[]()').str.split(',', expand=True)
@@ -100,22 +103,22 @@ app.layout = html.Div(
                         columns=[
                             {'name': 'Location', 'id': 'location'},
                             {'name': 'Fatalities', 'id': 'Fatalities', 'type': 'numeric'},
-                            {'name': 'Losses (mln EUR, 2020)', 'id': 'Losses (mln EUR, 2020)', 'type': 'numeric'}
+                            {'name': 'Losses (EUR, 2020)', 'id': 'Losses (EUR, 2020)', 'type': 'numeric'}  # Updated column name
                         ],
                         style_table={'overflowX': 'auto', 'border': '1px solid black'},
                         style_cell={'textAlign': 'center', 'backgroundColor': '#fef3c7', 'color': 'black', 'border': '1px solid black'},
                         style_header={'backgroundColor': '#fef3c7', 'border': '1px solid black'},
                         style_data_conditional=[
                             {'if': {'column_id': 'Fatalities'}, 'textAlign': 'center'},
-                            {'if': {'column_id': 'Losses (mln EUR, 2020)'}, 'textAlign': 'center'},
+                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'textAlign': 'center'},  # Updated column name
                             {'if': {'column_id': 'location'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
                             {'if': {'column_id': 'Fatalities'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
-                            {'if': {'column_id': 'Losses (mln EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}
+                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}  # Updated column name
                         ],
                         style_header_conditional=[
                             {'if': {'column_id': 'location'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
                             {'if': {'column_id': 'Fatalities'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
-                            {'if': {'column_id': 'Losses (mln EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}
+                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}  # Updated column name
                         ]
                     )
                 ], width=6, lg=6),  # Karte und Slider links
@@ -124,7 +127,7 @@ app.layout = html.Div(
                         dbc.Col(
                             dcc.Dropdown(
                                 id='country-dropdown',
-                                options=[{'label': country, 'value': country} for country in flood_data['Country name'].unique()],
+                                options=[],
                                 value=None,  # No default value
                                 clearable=True,
                                 placeholder="Select a country",
@@ -172,6 +175,15 @@ app.layout = html.Div(
 )
 
 @app.callback(
+    Output('country-dropdown', 'options'),
+    Input('year-slider', 'value')
+)
+def update_country_options(selected_year):
+    filtered_data = flood_data[flood_data['Year'] == selected_year]
+    countries = filtered_data['Country name'].unique()
+    return [{'label': country, 'value': country} for country in countries]
+
+@app.callback(
     Output('map-plot', 'figure'),
     Output('flood-table', 'data'),
     Output('damage-table', 'data'),
@@ -189,91 +201,103 @@ def update_map(year, country):
     # Define map center and zoom level based on the selected country
     country_centers = {
         'Switzerland': {'lat': 46.8182, 'lon': 8.2275},
-        'Germany': {'lat': 51.1657, 'lon': 10.4515},
-        'France': {'lat': 46.6034, 'lon': 1.8883},
         'Italy': {'lat': 41.8719, 'lon': 12.5674},
-        'Liechtenstein': {'lat': 47.166, 'lon': 9.5554},
+        'Germany': {'lat': 51.1657, 'lon': 10.4515},
         'Austria': {'lat': 47.5162, 'lon': 14.5501},
+        'France': {'lat': 46.6034, 'lon': 1.8883},
+        'Liechtenstein': {'lat': 47.166, 'lon': 9.5554},
         'Slovenia': {'lat': 46.1512, 'lon': 14.9955}
     }
     
+    country_zoom_levels = {
+        'Switzerland': 7,
+        'Italy': 5,
+        'Germany': 5,
+        'Austria': 6,
+        'France': 5,
+        'Liechtenstein': 10,
+        'Slovenia': 8
+    }
+    
     map_center = country_centers.get(country, {'lat': 50.1109, 'lon': 8.6821})
-    zoom_level = 6 if country else 3
+    zoom_level = country_zoom_levels.get(country, 3)
     
     # Replace NaN values in 'Losses (mln EUR, 2020)' with a placeholder for losses under 1 million EUR
-    filtered_data['Losses (mln EUR, 2020)'] = filtered_data['Losses (mln EUR, 2020)'].fillna('< 1 mln EUR')
+    filtered_data['Losses (EUR, 2020)'] = filtered_data['Losses (mln EUR, 2020)'].fillna('< 1 mln EUR')
     
     # Determine marker size based on losses
-    filtered_data['marker_size'] = filtered_data.apply(lambda row: max(10, row['Losses (mln EUR, 2020)'] / 10) if row['Losses (mln EUR, 2020)'] != '< 1 mln EUR' else 10, axis=1)
+    filtered_data['marker_size'] = filtered_data.apply(lambda row: max(10, row['Losses (EUR, 2020)'] / 10) if row['Losses (EUR, 2020)'] != '< 1 mln EUR' else 10, axis=1)
 
-    # Check if there is data to plot
-    if (filtered_data.empty) or ('Name' not in filtered_data.columns):
-        fig = go.Figure()
-        fig.update_layout(mapbox_style="carto-darkmatter")
-        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-        fig.update_layout(mapbox=dict(center=map_center, zoom=zoom_level))
-        fig.add_annotation(
-            x=0.5, y=0.5, text="No data available for this selection",
-            showarrow=False, font=dict(size=20, color="white"),
-            xref="paper", yref="paper"
-        )
-        flood_table_data = []
-        damage_table_data = []
-    else:
-        # Plot data if available
-        fig = px.scatter_mapbox(
-            filtered_data, 
-            lat="Latitude", 
-            lon="Longitude", 
-            hover_name="Name",  # Use the region name for hover info
-            size='marker_size' if country else None,  # Adjust size only if a country is selected
-            size_max=30,
-            color_discrete_sequence=["black"], 
-            zoom=zoom_level, 
-            height=500
-        )
-        # Remove latitude and longitude from hover data
-        fig.update_traces(marker=dict(opacity=0.5 if country else 1.0))  # Adjust opacity only if a country is selected
-        fig.update_traces(hovertemplate='<b>%{hovertext}</b>')
-        fig.update_layout(mapbox_style="carto-positron")
-        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-        fig.update_layout(mapbox=dict(center=map_center, zoom=zoom_level))
-        
-        # Prepare flood table data
-        flood_table_data = filtered_data[['Name', 'Start date', 'End date']].copy()
-        flood_table_data['Start date'] = flood_table_data['Start date'].dt.strftime('%d.%m.%Y')
-        flood_table_data['End date'] = flood_table_data['End date'].dt.strftime('%d.%m.%Y')
-        flood_table_data = flood_table_data.rename(columns={'Name': 'location', 'Start date': 'Start date', 'End date': 'End date'}).to_dict('records')
-        
-        # Prepare damage table data
-        damage_data = filtered_data[['Name', 'Fatalities', 'Losses (mln EUR, 2020)']].copy()
-        damage_data['Fatalities'] = damage_data['Fatalities'].fillna('None')
-        damage_grouped = damage_data.groupby(['Fatalities', 'Losses (mln EUR, 2020)']).agg({'Name': ', '.join}).reset_index()
-        damage_grouped = damage_grouped.rename(columns={'Name': 'location'})
-        damage_table_data = damage_grouped.to_dict('records')
+    # Plot data if available, otherwise show a message
+    fig = px.scatter_mapbox(
+        filtered_data, 
+        lat="Latitude", 
+        lon="Longitude", 
+        hover_name="Name",  # Use the region name for hover info
+        size='marker_size' if country else None,  # Adjust size only if a country is selected
+        size_max=30,
+        color_discrete_sequence=["black"], 
+        zoom=zoom_level, 
+        height=500
+    )
+    fig.update_traces(marker=dict(opacity=0.5 if country else 1.0))  # Adjust opacity only if a country is selected
+    fig.update_traces(hovertemplate='<b>%{hovertext}</b>')
+    fig.update_layout(mapbox_style="carto-positron")
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    fig.update_layout(mapbox=dict(center=map_center, zoom=zoom_level))
+    
+    # Prepare flood table data
+    flood_table_data = filtered_data[['Name', 'Start date', 'End date']].copy()
+    flood_table_data['Start date'] = flood_table_data['Start date'].dt.strftime('%d.%m.%Y')
+    flood_table_data['End date'] = flood_table_data['End date'].dt.strftime('%d.%m.%Y')
+    flood_table_data = flood_table_data.rename(columns={'Name': 'location', 'Start date': 'Start date', 'End date': 'End date'}).to_dict('records')
+    
+    # Prepare damage table data
+    damage_data = filtered_data[['Name', 'Fatalities', 'Losses (EUR, 2020)']].copy()
+    damage_data['Fatalities'] = damage_data['Fatalities'].fillna('None')
+    damage_data['Losses (EUR, 2020)'] = damage_data['Losses (EUR, 2020)'].apply(lambda x: '{:,.0f}'.format(x).replace(',', "'") if isinstance(x, (int, float)) else x)  # Format numbers
+    damage_data['Name'] = damage_data['Name'].fillna('').astype(str)  # Convert 'Name' column to string and replace NaNs with empty strings
+    damage_grouped = damage_data.groupby(['Fatalities', 'Losses (EUR, 2020)']).agg({'Name': ', '.join}).reset_index()
+    damage_grouped = damage_grouped.rename(columns={'Name': 'location'})
+    damage_table_data = damage_grouped.to_dict('records')
     
     return fig, flood_table_data, damage_table_data
 
 @app.callback(
     Output('precipitation-plot', 'figure'),
     Input('year-slider', 'value'),
-    Input('timeframe-dropdown', 'value')
+    Input('timeframe-dropdown', 'value'),
+    Input('country-dropdown', 'value')  # Hinzufügen des Inputs für das ausgewählte Land
 )
-def update_charts(year, timeframe):
+def update_charts(year, timeframe, country):
     filtered_data = rain_data[rain_data['DAY'].dt.year == year]
     
+    # Falls ein Land ausgewählt wurde, filtern Sie die Daten nach diesem Land
+    if country:
+        # Verwenden Sie Geopandas, um die Koordinaten zu filtern
+        selected_country = countries[countries['name'] == country]
+        gdf = gpd.GeoDataFrame(
+            filtered_data, geometry=gpd.points_from_xy(filtered_data.LONGITUDE, filtered_data.LATITUDE))
+        filtered_data = gpd.sjoin(gdf, selected_country, how="inner", op='within')
+        filtered_data = pd.DataFrame(filtered_data.drop(columns=['geometry', 'index_right']))  # Entfernen Sie die Geometriespalte und andere unnötige Spalten für die Gruppierung
+
+    # Berechnung von Mittelwerten für Niederschlag, gruppiert nach dem gewünschten Zeitrahmen
     if timeframe == 'D':
-        filtered_data = filtered_data.groupby('DAY').mean().reset_index()
+        filtered_data = filtered_data.groupby('DAY').mean(numeric_only=True).reset_index()
         y_label = 'Niederschlag (mm/Tag)'
     elif timeframe == 'W':
-        filtered_data = filtered_data.resample('W-Mon', on='DAY').mean().reset_index()
+        filtered_data = filtered_data.resample('W', on='DAY').mean(numeric_only=True).reset_index()
         y_label = 'Niederschlag (mm/Woche)'
     elif timeframe == 'M':
-        filtered_data = filtered_data.resample('M', on='DAY').mean().reset_index()
+        filtered_data = filtered_data.resample('M', on='DAY').mean(numeric_only=True).reset_index()
         y_label = 'Niederschlag (mm/Monat)'
 
     # Add a column to indicate if the date falls within any flood event
-    flood_periods = flood_data[['Start date', 'End date']].dropna()
+    if country:
+        flood_periods = flood_data[(flood_data['Year'] == year) & (flood_data['Country name'] == country)][['Start date', 'End date']].dropna()
+    else:
+        flood_periods = flood_data[flood_data['Year'] == year][['Start date', 'End date']].dropna()
+
     filtered_data['In_Flood_Period'] = filtered_data['DAY'].apply(lambda day: any((day >= start) and (day <= end) for start, end in zip(flood_periods['Start date'], flood_periods['End date'])))
 
     # Map True/False to 'Überschwemmung'/'Niederschläge'
@@ -299,4 +323,4 @@ def update_charts(year, timeframe):
     return precipitation_fig
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8051)
