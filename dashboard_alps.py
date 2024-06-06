@@ -71,8 +71,31 @@ app.layout = html.Div(
             ]),
             dbc.Row([
                 dbc.Col([
-                    dcc.Graph(id='map-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}),
-                    html.Br(),  # Add a line break for spacing
+                    dcc.Dropdown(
+                        id='country-dropdown',
+                        options=[],
+                        value=None,  # No default value
+                        clearable=True,
+                        placeholder="Select a country",
+                        style={'background-color': '#fef3c7'}
+                    ),
+                ], width=6),
+                dbc.Col([
+                    dcc.Dropdown(
+                        id='timeframe-dropdown',
+                        options=[
+                            {'label': 'Täglich', 'value': 'D'},
+                            {'label': 'Wöchentlich', 'value': 'W'},
+                            {'label': 'Monatlich', 'value': 'M'}
+                        ],
+                        value='D',  # Standardwert
+                        clearable=False,
+                        style={'background-color': '#fef3c7'}
+                    ),
+                ], width=6)
+            ]),
+            dbc.Row([
+                dbc.Col(
                     dcc.Slider(
                         id='year-slider',
                         min=flood_data['Year'].min(),
@@ -81,8 +104,17 @@ app.layout = html.Div(
                         marks={str(year): {'label': str(year), 'style': {'transform': 'rotate(45deg)', 'white-space': 'nowrap', 'color': '#fef3c7'}} for year in flood_data['Year'].unique()},
                         step=None
                     ),
-                    html.Br(),  # Add another line break for more spacing
-                    html.H5("Überschwemmungen", style={'color': '#fef3c7'}),  # Add table title in desired color
+                width=12),
+            ]),
+            dbc.Row([
+                dbc.Col(dcc.Graph(id='precipitation-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px', 'height': '60vh'}), width=12),
+            ]),
+            dbc.Row([
+                dbc.Col(dcc.Graph(id='map-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px', 'height': '60vh'}), width=12),
+            ]),
+            dbc.Row([
+                dbc.Col([
+                    html.H5("Überschwemmungen", style={'color': '#fef3c7'}),
                     dash_table.DataTable(
                         id='flood-table',
                         columns=[
@@ -96,66 +128,33 @@ app.layout = html.Div(
                         style_data={'backgroundColor': '#fef3c7', 'border': '1px solid black'},
                         style_as_list_view=True
                     ),
-                    html.Br(),
-                    html.H5("Schäden und Verluste", style={'color': '#fef3c7'}),  # Add title for new table
+                ], width=6),
+                dbc.Col([
+                    html.H5("Schäden und Verluste", style={'color': '#fef3c7'}),
                     dash_table.DataTable(
                         id='damage-table',
                         columns=[
                             {'name': 'Location', 'id': 'location'},
                             {'name': 'Fatalities', 'id': 'Fatalities', 'type': 'numeric'},
-                            {'name': 'Losses (EUR, 2020)', 'id': 'Losses (EUR, 2020)', 'type': 'numeric'}  # Updated column name
+                            {'name': 'Losses (EUR, 2020)', 'id': 'Losses (EUR, 2020)', 'type': 'numeric'}
                         ],
                         style_table={'overflowX': 'auto', 'border': '1px solid black'},
                         style_cell={'textAlign': 'center', 'backgroundColor': '#fef3c7', 'color': 'black', 'border': '1px solid black'},
                         style_header={'backgroundColor': '#fef3c7', 'border': '1px solid black'},
                         style_data_conditional=[
                             {'if': {'column_id': 'Fatalities'}, 'textAlign': 'center'},
-                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'textAlign': 'center'},  # Updated column name
+                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'textAlign': 'center'},
                             {'if': {'column_id': 'location'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
                             {'if': {'column_id': 'Fatalities'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
-                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}  # Updated column name
+                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}
                         ],
                         style_header_conditional=[
                             {'if': {'column_id': 'location'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
                             {'if': {'column_id': 'Fatalities'}, 'border-left': '1px solid black', 'border-right': '1px solid black'},
-                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}  # Updated column name
+                            {'if': {'column_id': 'Losses (EUR, 2020)'}, 'border-left': '1px solid black', 'border-right': '1px solid black'}
                         ]
                     )
-                ], width=6, lg=6),  # Karte und Slider links
-                dbc.Col([
-                    dbc.Row(
-                        dbc.Col(
-                            dcc.Dropdown(
-                                id='country-dropdown',
-                                options=[],
-                                value=None,  # No default value
-                                clearable=True,
-                                placeholder="Select a country",
-                                style={'background-color': '#fef3c7'}
-                            ),
-                            width=12
-                        ),
-                    ),
-                    dbc.Row([
-                        dbc.Col(
-                            dcc.Dropdown(
-                                id='timeframe-dropdown',
-                                options=[
-                                    {'label': 'Täglich', 'value': 'D'},
-                                    {'label': 'Wöchentlich', 'value': 'W'},
-                                    {'label': 'Monatlich', 'value': 'M'}
-                                ],
-                                value='D',  # Standardwert
-                                clearable=False,
-                                style={'background-color': '#fef3c7'}
-                            ),
-                            width=6
-                        )
-                    ]),
-                    dbc.Row(
-                        dbc.Col(dcc.Graph(id='precipitation-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px'}), width=12),
-                    )
-                ], width=6, lg=6)  # Grafen rechts
+                ], width=6)
             ]),
             dbc.Row([
                 dbc.Col(
@@ -222,11 +221,11 @@ def update_map(year, country):
     map_center = country_centers.get(country, {'lat': 50.1109, 'lon': 8.6821})
     zoom_level = country_zoom_levels.get(country, 3)
     
-    # Replace NaN values in 'Losses (mln EUR, 2020)' with a placeholder for losses under 1 million EUR
-    filtered_data['Losses (EUR, 2020)'] = filtered_data['Losses (mln EUR, 2020)'].fillna('< 1 mln EUR')
+    # Replace NaN values in 'Losses (mln EUR, 2020)' with 0 for losses under 1 million EUR
+    filtered_data['Losses (EUR, 2020)'] = filtered_data['Losses (mln EUR, 2020)'].fillna(0)
     
     # Determine marker size based on losses
-    filtered_data['marker_size'] = filtered_data.apply(lambda row: max(10, row['Losses (EUR, 2020)'] / 10) if row['Losses (EUR, 2020)'] != '< 1 mln EUR' else 10, axis=1)
+    filtered_data['marker_size'] = filtered_data.apply(lambda row: max(10, row['Losses (EUR, 2020)'] / 10) if row['Losses (EUR, 2020)'] != 0 else 10, axis=1)
 
     # Plot data if available, otherwise show a message
     fig = px.scatter_mapbox(
@@ -267,19 +266,18 @@ def update_map(year, country):
     Output('precipitation-plot', 'figure'),
     Input('year-slider', 'value'),
     Input('timeframe-dropdown', 'value'),
-    Input('country-dropdown', 'value')  # Hinzufügen des Inputs für das ausgewählte Land
+    Input('country-dropdown', 'value')
 )
 def update_charts(year, timeframe, country):
     filtered_data = rain_data[rain_data['DAY'].dt.year == year]
-    
+
     # Falls ein Land ausgewählt wurde, filtern Sie die Daten nach diesem Land
     if country:
-        # Verwenden Sie Geopandas, um die Koordinaten zu filtern
         selected_country = countries[countries['name'] == country]
         gdf = gpd.GeoDataFrame(
             filtered_data, geometry=gpd.points_from_xy(filtered_data.LONGITUDE, filtered_data.LATITUDE))
         filtered_data = gpd.sjoin(gdf, selected_country, how="inner", op='within')
-        filtered_data = pd.DataFrame(filtered_data.drop(columns=['geometry', 'index_right']))  # Entfernen Sie die Geometriespalte und andere unnötige Spalten für die Gruppierung
+        filtered_data = pd.DataFrame(filtered_data.drop(columns=['geometry', 'index_right']))
 
     # Berechnung von Mittelwerten für Niederschlag, gruppiert nach dem gewünschten Zeitrahmen
     if timeframe == 'D':
@@ -303,16 +301,30 @@ def update_charts(year, timeframe, country):
     # Map True/False to 'Überschwemmung'/'Niederschläge'
     filtered_data['In_Flood_Period'] = filtered_data['In_Flood_Period'].map({True: 'Überschwemmung', False: 'Niederschläge'})
 
+    # Berechne den gleitenden Durchschnitt des Niederschlags über einen Zeitraum von 5 Tagen
+    filtered_data['Moving_Average'] = filtered_data['PRECIPITATION'].rolling(window=5, min_periods=1).mean()
+
     # Precipitation bar plot
     precipitation_fig = px.bar(
         filtered_data, 
         x='DAY', 
         y='PRECIPITATION', 
         title=f'{timeframe}-Niederschlag', 
-        labels={'PRECIPITATION': y_label},  # Dynamische Achsenbeschriftung
-        color='In_Flood_Period',  # Color based on whether it's in a flood period
-        color_discrete_map={'Überschwemmung': 'red', 'Niederschläge': '#000080'}  # Red for flood periods, navy blue otherwise
+        labels={'PRECIPITATION': y_label},
+        color='In_Flood_Period',
+        color_discrete_map={'Überschwemmung': 'red', 'Niederschläge': '#000080'}
     )
+
+    # Füge den gleitenden Durchschnitt als Linie hinzu
+    precipitation_fig.add_trace({
+        'x': filtered_data['DAY'],
+        'y': filtered_data['Moving_Average'],
+        'mode': 'lines',
+        'line': {'color': 'green', 'width': 2},
+        'name': 'Gleitender Durchschnitt',
+        'hovertemplate': 'Gleitender Durchschnitt: %{y:.2f} mm<extra></extra>'
+    })
+
     precipitation_fig.update_layout(
         plot_bgcolor='#FFFFFF', 
         paper_bgcolor='#fef3c7',
