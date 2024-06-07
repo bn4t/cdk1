@@ -330,7 +330,7 @@ def update_charts(year, timeframe, country):
         title=f'{timeframe}-Niederschlag', 
         labels={'PRECIPITATION': y_label},
         color='In_Flood_Period',
-        color_discrete_map={'Überschwemmung': 'red', 'Niederschläge': '#000080'}
+        color_discrete_map={'Überschwemmung': '#E69F00', 'Niederschläge': '#56B4E9'}
     )
 
     # Add moving average as a line
@@ -338,8 +338,8 @@ def update_charts(year, timeframe, country):
         'x': filtered_data['DAY'],
         'y': filtered_data['PRECIPITATION'].rolling(window=5, min_periods=1).mean(),
         'mode': 'lines',
-        'line': {'color': 'green', 'width': 2},
-        'name': 'Gleitender Durchschnitt',
+        'line': {'color': '#800080', 'width': 2},
+        'name': 'Gleitender Durchschnitt (5 Tage)',
         'hovertemplate': 'Gleitender Durchschnitt: %{y:.2f} mm<extra></extra>'
     })
 
@@ -358,7 +358,7 @@ def update_charts(year, timeframe, country):
         title=f'Kumulativer Niederschlag (1979-{year})', 
         labels={'PRECIPITATION': y_label},
         color='In_Flood_Period',
-        color_discrete_map={'Überschwemmung': 'red', 'Niederschläge': '#000080'}
+        color_discrete_map={'Überschwemmung': '#E69F00', 'Niederschläge': '#56B4E9'}
     )
 
     # Add moving average as a line
@@ -366,8 +366,8 @@ def update_charts(year, timeframe, country):
         'x': cumulative_data['DAY'],
         'y': cumulative_data['PRECIPITATION'].rolling(window=5, min_periods=1).mean(),
         'mode': 'lines',
-        'line': {'color': 'green', 'width': 2},
-        'name': 'Gleitender Durchschnitt',
+        'line': {'color': '#800080', 'width': 2},
+        'name': 'Gleitender Durchschnitt (5 Tage)',
         'hovertemplate': 'Gleitender Durchschnitt: %{y:.2f} mm<extra></extra>'
     })
 
