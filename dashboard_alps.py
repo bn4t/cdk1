@@ -7,28 +7,30 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 # Load data
-flood_data = pd.read_csv('flood_data_end.csv', sep=',')
+flood_data = pd.read_csv('flood_data_fixed.csv', sep=',')
 rain_data = pd.read_csv('rain_data_alps.csv', sep=',')
-regions_data = pd.read_csv('regions_with_coordinates.csv', sep=',')
+regions_data = pd.read_csv('regionswithcords.csv', sep=',')
 
 # Load country boundaries using geopandas
 countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
 # Function to parse dates with multiple formats
-def parse_dates(dates, formats):
+def parse_dates(date_series, formats):
     for fmt in formats:
         try:
-            return pd.to_datetime(dates, format=fmt, errors='coerce')
+            parsed_dates = pd.to_datetime(date_series, format=fmt, errors='coerce', dayfirst=True)
+            if parsed_dates.notna().all():
+                return parsed_dates
         except (ValueError, TypeError):
             continue
-    return pd.to_datetime(dates, errors='coerce')  # Fallback to default parsing
-
-# Parse 'DAY' column in rain_data with multiple formats
-rain_data['DAY'] = parse_dates(rain_data['DAY'], ['%d.%m.%Y', '%Y%m%d'])
+    return pd.to_datetime(date_series, errors='coerce', dayfirst=True)  # Fallback to default parsing
 
 # Parse 'Start date' and 'End date' columns in flood_data with multiple formats
 flood_data['Start date'] = parse_dates(flood_data['Start date'], ['%d.%m.%Y', '%Y-%m-%d'])
 flood_data['End date'] = parse_dates(flood_data['End date'], ['%d.%m.%Y', '%Y-%m-%d'])
+
+# Parse 'DAY' column in rain_data with mixed formats
+rain_data['DAY'] = parse_dates(rain_data['DAY'], ['%d.%m.%Y', '%Y-%m-%d', '%Y%m%d'])
 
 # Extract Latitude and Longitude from the 'regions' column in flood_data
 flood_data[['Latitude', 'Longitude']] = flood_data['regions'].str.strip('[]()').str.split(',', expand=True)
@@ -110,6 +112,13 @@ app.layout = html.Div(
                 dbc.Col(dcc.Graph(id='precipitation-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px', 'height': '60vh'}), width=12),
             ]),
             dbc.Row([
+                dbc.Col(
+                    html.Div(
+                        dcc.Graph(id='cumulative-precipitation-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px', 'height': '60vh', 'width': '800vw', 'display': 'inline-block'}),
+                        style={'overflowX': 'scroll', 'width': '100%'}
+                    ), width=12),
+            ]),
+            dbc.Row([
                 dbc.Col(dcc.Graph(id='map-plot', style={'background-color': '#fef3c7', 'border-radius': '10px', 'padding': '10px', 'height': '60vh'}), width=12),
             ]),
             dbc.Row([
@@ -169,7 +178,7 @@ app.layout = html.Div(
                     )
                 )
             ])
-        ], fluid=True, style={'height': '90vh', 'overflowY': 'scroll'})
+        ], fluid=True, style={'height': '90vh', 'overflowY': 'auto'})
     ]
 )
 
@@ -254,8 +263,8 @@ def update_map(year, country):
     # Prepare damage table data
     damage_data = filtered_data[['Name', 'Fatalities', 'Losses (EUR, 2020)']].copy()
     damage_data['Fatalities'] = damage_data['Fatalities'].fillna('None')
-    damage_data['Losses (EUR, 2020)'] = damage_data['Losses (EUR, 2020)'].apply(lambda x: '{:,.0f}'.format(x).replace(',', "'") if isinstance(x, (int, float)) else x)  # Format numbers
-    damage_data['Name'] = damage_data['Name'].fillna('').astype(str)  # Convert 'Name' column to string and replace NaNs with empty strings
+    damage_data['Losses (EUR, 2020)'] = damage_data['Losses (EUR, 2020)'].apply(lambda x: '{:,.0f}'.format(x).replace(',', "'") if isinstance(x, (int, float)) else x)
+    damage_data['Name'] = damage_data['Name'].fillna('').astype(str)
     damage_grouped = damage_data.groupby(['Fatalities', 'Losses (EUR, 2020)']).agg({'Name': ', '.join}).reset_index()
     damage_grouped = damage_grouped.rename(columns={'Name': 'location'})
     damage_table_data = damage_grouped.to_dict('records')
@@ -264,12 +273,14 @@ def update_map(year, country):
 
 @app.callback(
     Output('precipitation-plot', 'figure'),
+    Output('cumulative-precipitation-plot', 'figure'),
     Input('year-slider', 'value'),
     Input('timeframe-dropdown', 'value'),
     Input('country-dropdown', 'value')
 )
 def update_charts(year, timeframe, country):
     filtered_data = rain_data[rain_data['DAY'].dt.year == year]
+    cumulative_data = rain_data[(rain_data['DAY'].dt.year >= 1979) & (rain_data['DAY'].dt.year <= year)]
 
     # Falls ein Land ausgewählt wurde, filtern Sie die Daten nach diesem Land
     if country:
@@ -278,16 +289,24 @@ def update_charts(year, timeframe, country):
             filtered_data, geometry=gpd.points_from_xy(filtered_data.LONGITUDE, filtered_data.LATITUDE))
         filtered_data = gpd.sjoin(gdf, selected_country, how="inner", op='within')
         filtered_data = pd.DataFrame(filtered_data.drop(columns=['geometry', 'index_right']))
+        
+        gdf_cumulative = gpd.GeoDataFrame(
+            cumulative_data, geometry=gpd.points_from_xy(cumulative_data.LONGITUDE, cumulative_data.LATITUDE))
+        cumulative_data = gpd.sjoin(gdf_cumulative, selected_country, how="inner", op='within')
+        cumulative_data = pd.DataFrame(cumulative_data.drop(columns=['geometry', 'index_right']))
 
     # Berechnung von Mittelwerten für Niederschlag, gruppiert nach dem gewünschten Zeitrahmen
     if timeframe == 'D':
         filtered_data = filtered_data.groupby('DAY').mean(numeric_only=True).reset_index()
+        cumulative_data = cumulative_data.groupby('DAY').mean(numeric_only=True).reset_index()
         y_label = 'Niederschlag (mm/Tag)'
     elif timeframe == 'W':
         filtered_data = filtered_data.resample('W', on='DAY').mean(numeric_only=True).reset_index()
+        cumulative_data = cumulative_data.resample('W', on='DAY').mean(numeric_only=True).reset_index()
         y_label = 'Niederschlag (mm/Woche)'
     elif timeframe == 'M':
         filtered_data = filtered_data.resample('M', on='DAY').mean(numeric_only=True).reset_index()
+        cumulative_data = cumulative_data.resample('M', on='DAY').mean(numeric_only=True).reset_index()
         y_label = 'Niederschlag (mm/Monat)'
 
     # Add a column to indicate if the date falls within any flood event
@@ -297,14 +316,13 @@ def update_charts(year, timeframe, country):
         flood_periods = flood_data[flood_data['Year'] == year][['Start date', 'End date']].dropna()
 
     filtered_data['In_Flood_Period'] = filtered_data['DAY'].apply(lambda day: any((day >= start) and (day <= end) for start, end in zip(flood_periods['Start date'], flood_periods['End date'])))
+    cumulative_data['In_Flood_Period'] = cumulative_data['DAY'].apply(lambda day: any((day >= start) and (day <= end) for start, end in zip(flood_periods['Start date'], flood_periods['End date'])))
 
     # Map True/False to 'Überschwemmung'/'Niederschläge'
     filtered_data['In_Flood_Period'] = filtered_data['In_Flood_Period'].map({True: 'Überschwemmung', False: 'Niederschläge'})
+    cumulative_data['In_Flood_Period'] = cumulative_data['In_Flood_Period'].map({True: 'Überschwemmung', False: 'Niederschläge'})
 
-    # Berechne den gleitenden Durchschnitt des Niederschlags über einen Zeitraum von 5 Tagen
-    filtered_data['Moving_Average'] = filtered_data['PRECIPITATION'].rolling(window=5, min_periods=1).mean()
-
-    # Precipitation bar plot
+    # Precipitation bar plot for selected year
     precipitation_fig = px.bar(
         filtered_data, 
         x='DAY', 
@@ -315,10 +333,10 @@ def update_charts(year, timeframe, country):
         color_discrete_map={'Überschwemmung': 'red', 'Niederschläge': '#000080'}
     )
 
-    # Füge den gleitenden Durchschnitt als Linie hinzu
+    # Add moving average as a line
     precipitation_fig.add_trace({
         'x': filtered_data['DAY'],
-        'y': filtered_data['Moving_Average'],
+        'y': filtered_data['PRECIPITATION'].rolling(window=5, min_periods=1).mean(),
         'mode': 'lines',
         'line': {'color': 'green', 'width': 2},
         'name': 'Gleitender Durchschnitt',
@@ -332,7 +350,35 @@ def update_charts(year, timeframe, country):
         yaxis=dict(showgrid=True, gridcolor='grey')
     )
     
-    return precipitation_fig
+    # Cumulative precipitation bar plot
+    cumulative_precipitation_fig = px.bar(
+        cumulative_data, 
+        x='DAY', 
+        y='PRECIPITATION', 
+        title=f'Kumulativer Niederschlag (1979-{year})', 
+        labels={'PRECIPITATION': y_label},
+        color='In_Flood_Period',
+        color_discrete_map={'Überschwemmung': 'red', 'Niederschläge': '#000080'}
+    )
+
+    # Add moving average as a line
+    cumulative_precipitation_fig.add_trace({
+        'x': cumulative_data['DAY'],
+        'y': cumulative_data['PRECIPITATION'].rolling(window=5, min_periods=1).mean(),
+        'mode': 'lines',
+        'line': {'color': 'green', 'width': 2},
+        'name': 'Gleitender Durchschnitt',
+        'hovertemplate': 'Gleitender Durchschnitt: %{y:.2f} mm<extra></extra>'
+    })
+
+    cumulative_precipitation_fig.update_layout(
+        plot_bgcolor='#FFFFFF', 
+        paper_bgcolor='#fef3c7',
+        xaxis=dict(showgrid=True, gridcolor='grey'),
+        yaxis=dict(showgrid=True, gridcolor='grey')
+    )
+
+    return precipitation_fig, cumulative_precipitation_fig
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=8051)
