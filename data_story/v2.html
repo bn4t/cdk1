@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=bebas-neue:400" rel="stylesheet"/>
     <script>
-        document.onreadystatechange = function() {
+        document.onreadystatechange = function () {
             if (document.readyState !== "complete") {
                 document.querySelector("#content").style.visibility = "hidden";
                 document.querySelector("#loader").style.visibility = "visible";
@@ -72,7 +72,6 @@
             transform: rotate(360deg);
         }
     }
-
 
 
     .content {
@@ -161,9 +160,9 @@
         width: 100%;
         height: 100%;
         pointer-events: none;
-        background-size: 14px 10px, 14px 10px;
-        background-position: 0, 7px 0px;
-        background-image: radial-gradient(circle, rgba(255, 255, 255, 0) 5%, #000), radial-gradient(circle, rgba(255, 255, 255, 0) 5%, #000);
+        background-size: 16px 10px, 16px 10px;
+        background-position: 0, 8px 0px;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0) 4%, #000), radial-gradient(circle, rgba(255, 255, 255, 0) 4%, #000);
         mix-blend-mode: multiply;
     }
 
@@ -213,7 +212,6 @@
 </style>
 
 
-
 <body class="bg-amber-100 subpixel-antialiased">
 
 <div class="loader" id="loader">
@@ -243,7 +241,7 @@
         <div class="mt-10 ml-3 z-10 text-black absolute w-full">
             <h1 class="text-9xl w-5/6">Einleitung</h1>
             <div class="flex flex-wrap items-start justify-between lg:mt-10 mt-20 pr-20 pl-1">
-                <div class="lg:w-3/5 lg:text-3xl md:text-4xl w-full text-6xl">
+                <div class="lg:w-3/5 lg:text-2xl md:text-3xl w-full text-5xl">
                     <p>Es ist der
                         <mark>30.Mai 2024</mark>
                         , für die nächsten Tage befürchten Meteorologen, dass sich eine Vb-Wetterlage über Europa
@@ -287,7 +285,7 @@
         <div class="mt-10 z-10 text-white absolute w-full ml-3">
             <h1 class="text-9xl w-5/6">Schaden</h1>
             <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
-                <div class="lg:w-3/5 lg:text-3xl md:text-4xl w-full text-6xl">
+                <div class="lg:w-3/5 lg:text-2xl md:text-3xl w-full text-5xl">
                     <p>Die Flut von 2005 war eine der schwersten Naturkatastrophen in der Schweiz seit Jahrzehnten und
                         verursachte
                         erhebliche
@@ -295,27 +293,34 @@
                         </mark>
                     </p>
                     <p class="lg:mt-3 mt-10">Die Überschwemmungen verursachten insgesamt Schäden in Höhe von etwa
-                        <mark class="text-white">2,5 Milliarden Franken</mark>,
+                        <mark class="text-white">2,5 Milliarden Franken</mark>
+                        ,
                         wobei der Grossteil der Schäden im privaten Bereich waren.
                     </p>
                     <p class="lg:mt-3 mt-10">Die Flut betraf
-                        <mark class="text-white">17 Kantone</mark>, wobei
+                        <mark class="text-white">17 Kantone</mark>
+                        , wobei
                         <mark class="text-white">sechs Menschen</mark>
                         ihr Leben verloren. Besonders betroffen von den Schäden waren die Kantone
-                        <mark class="text-white">Bern, Glarus und Uri</mark>.
+                        <mark class="text-white">Bern, Glarus und Uri</mark>
+                        .
                     </p>
                     <p class="lg:mt-3 mt-10">An vielen Orten wurden neue Rekordwerte (Niederschläge, Abflüsse und
                         Seestände) gemessen, dessen Wiederkehrperiode meist im seltenen Bereich (100 - 300 Jahre)
                         liegt.</p>
-                    <p class="lg:mt-3 mt-10">Insgesamt kam die Schweiz dank <mark class="text-white">guter Vorbereitung und funktionierender Schutzkonzepte</mark> glimpflich davon, dennoch
-                        zeigte die Flut von 2005, wie verheerend solche Ereignisse sein können.</p>
+                    <p class="lg:mt-3 mt-10">Insgesamt kam die Schweiz dank
+                        <mark class="text-white">guter Vorbereitung und funktionierender Schutzkonzepte</mark>
+                        glimpflich davon, dennoch
+                        zeigte die Flut von 2005, wie verheerend solche Ereignisse sein können.
+                    </p>
 
                 </div>
                 <div class="w-2/5 px-5 flex flex-wrap">
                     <video autoplay muted loop class="mt-5 rounded-xl">
                         <source src="assets/flood-2005.mp4" type="video/mp4">
                     </video>
-                    <p class="text-2xl text-center mt-3">Video-Aufnahmen der Flut zeigen die verursachten Schäden und Rettungsmassnahmen.</p>
+                    <p class="text-2xl text-center mt-3">Video-Aufnahmen der Flut zeigen die verursachten Schäden und
+                        Rettungsmassnahmen.</p>
                 </div>
             </div>
         </div>
@@ -333,22 +338,30 @@
             <h1 class="text-9xl w-5/6">Ursache</h1>
 
             <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
-                <div class="lg:w-3/5 lg:text-3xl md:text-4xl w-full text-6xl">
+                <div class="lg:w-3/5 lg:text-2xl md:text-3xl w-full text-5xl">
                     <p>Die Flut wurde durch eine ungewöhnliche,
                         meteorologische Konstellation ausgelöst, die als
                         <mark class="text-white">VB-Wetterlage</mark>
-                        bekannt ist.</p>
+                        bekannt ist.
+                    </p>
                     <p class="lg:mt-3 mt-10">
-                        Eine VB-Wetterlage tritt dann auf, wenn kalte Luftmassen von <mark class="text-white">Nordwesten über Europa</mark> bis in den Golf von
+                        Eine VB-Wetterlage tritt dann auf, wenn kalte Luftmassen von
+                        <mark class="text-white">Nordwesten über Europa</mark>
+                        bis in den Golf von
                         Genua ziehen. Dort nimmt dieses Tiefdruckgebiet sehr viel Feuchtigkeit aus dem warmen Mittelmeer
-                        auf.</p>
-                    <p class="lg:mt-3 mt-10">Mit Wasser gesättigt ziehen die Luftmassen dann in Richtung Nordosten nach Österreich,
+                        auf.
+                    </p>
+                    <p class="lg:mt-3 mt-10">Mit Wasser gesättigt ziehen die Luftmassen dann in Richtung Nordosten nach
+                        Österreich,
                         Deutschland, Tschechien und der Schweiz. Wenn die Luftmassen dort über Land wieder abkühlen,
-                        können sie zu <mark class="text-white">extremen Regen und Überschwemmungen</mark> führen.
+                        können sie zu
+                        <mark class="text-white">extremen Regen und Überschwemmungen</mark>
+                        führen.
                     </p>
                     <p class="lg:mt-3 mt-10">
                         Zusätzlich zur speziellen Wetterlage, stieg die Schneefallgrenze in der Schweiz auf
-                        <mark class="text-white">über 3000 Meter</mark>, sodass
+                        <mark class="text-white">über 3000 Meter</mark>
+                        , sodass
                         <mark class="text-white">zusätzlicher Niederschlag als Regen</mark>
                         abfloss.
                     </p>
@@ -383,7 +396,7 @@
             <h1 class="text-9xl w-5/6">Wie Weiter?</h1>
 
             <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
-                <div class="lg:w-3/5 lg:text-3xl md:text-4xl w-full text-6xl">
+                <div class="lg:w-3/5 lg:text-2xl md:text-3xl w-full text-5xl">
 
                     <p>Ereignisse wie die, im August 2005 erfolgte, Überschwemmung, zeigen
                         <mark class="text-white">wie starke Regenfälle zu
@@ -406,15 +419,20 @@
                         <mark class="text-white">vermehrt zu Überschwemmungen</mark>
                         führen könnte, sofern keine weiteren Schutzmassnahmen getroffen werden.
                     </p>
-                    <p class="mt-12 2xl:text-5xl text-4xl">Die Flut von 2005 zeigt, was vermehrt auf uns zukömmen könnte,
+                    <p class="mt-12 2xl:text-5xl text-4xl">Die Flut von 2005 zeigt, was vermehrt auf uns zukömmen
+                        könnte,
                         wenn aktuelle Klimaprognosen eintreffen und die Schweiz ihre Schutzkonzepte nicht kontinuierlich
                         verbessert.</p>
                 </div>
                 <div class="w-2/5 px-5">
-                    <div class="px-20">
-                    <img src="assets/niederschlag-temperatur.png" class="rounded-xl">
+                    <div class="px-32">
+                        <img src="assets/niederschlag-temperatur.png" class="rounded-xl">
                     </div>
-                    <p class="text-2xl mt-3 text-center">Prognose Zusammenhang Temperatur und Stärke von Regenfällen<br>Quelle: doi:10.1038/ngeo262</p>
+                    <p class="text-2xl mt-3 text-center">Prognose Zusammenhang Temperatur und Stärke von Regenfällen in
+                        De Bilt, Niederlanden.
+                        Da die Schweiz und Niederlande ein ähnliches Klima haben, kann man anhand dieser Prognose in
+                        davon ausgehen, dass mit der fortschreitenden Klimaerwärmung die
+                        Regenfälle uch in der Schweiz stärker werden.<br>Quelle: doi:10.1038/ngeo262</p>
                 </div>
             </div>
         </div>
