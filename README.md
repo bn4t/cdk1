@@ -41,6 +41,7 @@ Um das Dashboard sowie die Datenstory starten zu können, benötigen Sie Visual 
 
 ## Schritte zur Installation
 Sie können entweder unser gesamtes GitHub-Repository klonen oder nur die relevanten Dateien herunterladen. Wichtig ist, dass sich die Daten sowie die Code-Dateien im VS Code-Workspace befinden, damit alles reibungslos funktioniert.
+
 ![Workspace](https://github.com/bn4t/cdk1/assets/145562358/a282049a-17d0-4735-8b62-d58afc74614c)
 
 
