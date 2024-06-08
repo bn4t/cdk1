@@ -69,7 +69,7 @@ Sie können entweder unser gesamtes GitHub-Repository klonen oder nur die releva
 Die Informationen zu unserem Arbeitsablauf finden Sie in unserem [Wiki](https://github.com/bn4t/cdk1/wiki).
 
 ## Mitwirkende
-Benjamin Nater
-Boran Eker
-Murat Kayhan
+- Benjamin Nater
+- Boran Eker
+- Murat Kayhan
 
