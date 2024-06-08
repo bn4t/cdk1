@@ -48,10 +48,7 @@ Sie können entweder unser gesamtes GitHub-Repository klonen oder nur die releva
 ## Nutzung
 1. Öffnen Sie das Terminal in VS Code, indem Sie auf `Terminal` > `New Terminal` im Menü klicken.
 2. Geben Sie im Terminal den folgenden Befehl ein (abhängig davon, wie Ihre Hauptdatei heißt):
-   - Für `app.py`:
-     ```bash
-     python app.py
-     ```
+   
    - Für `dashboard.py`:
      ```bash
      python dashboard.py
@@ -65,8 +62,8 @@ Sie können entweder unser gesamtes GitHub-Repository klonen oder nur die releva
      open data_story.html
      ```
 
-3. Nachdem der Code vollständig ausgeführt wurde, wird ein Link in der Form `http://127.0.0.1:5000` im Terminal angezeigt.
-4. Klicken Sie auf diesen Link, indem Sie `Ctrl + Linksklick` (Windows/Linux) oder `Command + Linksklick` (Mac) verwenden, um das Dashboard in Ihrem Browser zu öffnen.
+4. Nachdem der Code vollständig ausgeführt wurde, wird ein Link in der Form `http://127.0.0.1:5000` im Terminal angezeigt.
+5. Klicken Sie auf diesen Link, indem Sie `Ctrl + Linksklick` (Windows/Linux) oder `Command + Linksklick` (Mac) verwenden, um das Dashboard in Ihrem Browser zu öffnen.
 
 ## Dokumentation
 Die Informationen zu unserem Arbeitsablauf finden Sie in unserem [Wiki](https://github.com/bn4t/cdk1/wiki).
