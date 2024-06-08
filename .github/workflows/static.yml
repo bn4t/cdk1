@@ -34,7 +34,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: rename html file
-        run: mv data_story/v2.html data_story/index.html
+        run: mv data_story/data_story.html data_story/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
