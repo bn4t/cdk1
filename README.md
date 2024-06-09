@@ -45,6 +45,21 @@ Sie können entweder unser gesamtes GitHub-Repository klonen oder nur die releva
 ![Workspace](https://github.com/bn4t/cdk1/assets/145562358/a282049a-17d0-4735-8b62-d58afc74614c)
 
 
+### Git LFS
+
+Falls das Repository mit git geklont wurde, müssen die Datensets mit git lfs heruntergeladen werden.
+Dokumentation zur Installation von git lfs: https://git-lfs.com/
+
+Nachdem Git LFS installiert ist und das git repository geklont ist können die Detensets mit folgendem Befehl 
+(in der Directory vom git repository) heruntergeladen werden:
+
+```bash
+git lfs checkout
+```
+
+----
+
+
 ## Nutzung
 1. Öffnen Sie das Terminal in VS Code, indem Sie auf `Terminal` > `New Terminal` im Menü klicken.
 2. Geben Sie im Terminal den folgenden Befehl ein (abhängig davon, wie Ihre Hauptdatei heißt):
