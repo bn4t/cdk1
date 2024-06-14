@@ -7,9 +7,9 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 # Load data
-flood_data = pd.read_csv('flood_data_fixed.csv', sep=',')
-rain_data = pd.read_csv('rain_data_alps.csv', sep=',')
-regions_data = pd.read_csv('regionswithcords.csv', sep=',')
+flood_data = pd.read_csv('../data/generated/flood_data_fixed.csv', sep=',')
+rain_data = pd.read_csv('../data/generated/rain_data_alps.csv', sep=',')
+regions_data = pd.read_csv('../data/generated/regionswithcords.csv', sep=',')
 
 # Load country boundaries using geopandas
 countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
