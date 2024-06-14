@@ -54,7 +54,8 @@ Nachdem Git LFS installiert ist und das git repository geklont ist können die D
 (in der Directory vom git repository) heruntergeladen werden:
 
 ```bash
-git lfs checkout
+$ git lfs checkout
+$ git lfs fetch
 ```
 
 ----
