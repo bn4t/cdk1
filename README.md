@@ -63,7 +63,8 @@ $ git lfs fetch
 
 ## Nutzung
 1. Öffnen Sie das Terminal in VS Code, indem Sie auf `Terminal` > `New Terminal` im Menü klicken.
-2. Geben Sie im Terminal den folgenden Befehl ein (abhängig davon, wie Ihre Hauptdatei heißt):
+2. In der directory `dashboard` führen Sie folgenden Befehl aus um alle dependencies zu installieren: `pip install -r requirements.txt`
+3. Geben Sie im Terminal den folgenden Befehl ein (abhängig davon, wie Ihre Hauptdatei heißt):
    
    - Für `dashboard.py`:
      ```bash
