@@ -8,9 +8,9 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 # Load data
-flood_data = pd.read_csv('./flood_data.csv', sep=',')
-rain_data = pd.read_csv('./rain_data.csv', sep=',')
-regions_data = pd.read_csv('./regions_ch.csv', sep=',')
+flood_data = pd.read_csv('../data/generated/flood_data.csv', sep=',')
+rain_data = pd.read_csv('../data/generated/rain_data.csv', sep=',')
+regions_data = pd.read_csv('../data/generated/regions_ch.csv', sep=',')
 
 # Print column names to verify them
 print("Flood Data Columns:", flood_data.columns)
