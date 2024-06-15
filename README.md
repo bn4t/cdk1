@@ -82,7 +82,7 @@ git lfs pull
 5. Klicken Sie auf diesen Link, indem Sie `Ctrl + Linksklick` (Windows/Linux) oder `Command + Linksklick` (Mac) verwenden, um das Dashboard in Ihrem Browser zu öffnen.
 
 ## Dokumentation
-Die Informationen zu unserem Arbeitsablauf finden Sie in unserem [Wiki](https://github.com/bn4t/cdk1/wiki).
+Die Informationen zu unserem Arbeitsablauf finden Sie in unserem [Wiki]([https://github.com/bn4t/cdk1/wiki](https://github.com/bn4t/cdk1/wiki/Dokumenation-Arbeitsablauf)).
 
 ## Mitwirkende
 - Benjamin Nater
