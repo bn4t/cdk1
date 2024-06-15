@@ -1,7 +1,7 @@
 # cdk1
 Herzlich willkommen zu unserer Klimadaten-Challenge cdk1 zum Thema Überschwemmungen! In diesem README finden Sie alle wichtigen Informationen zu unserer Herausforderung, den Zielen und der Struktur unseres Projekts.
 
-## projektübersicht
+## Projektübersicht
 Im Rahmen unserer Klimadaten-Challenge haben wir uns einer wichtigen Aufgabe gestellt: Die Europäische Union möchte die Bevölkerung besser über die Risiken des Klimawandels informieren. Geplant ist eine neue Webseite, auf der Daten zur Entwicklung bestimmter Extremereignisse in Europa übersichtlich dargestellt werden.
 
 Wir haben uns entschieden, den Fokus auf Überschwemmungen zu legen. Sowohl Fachpersonen als auch interessierte Bürger sollen mit wenigen Klicks einen Überblick über die Klimaveränderungen in für sie relevanten Regionen erhalten, abgestimmt auf ihre individuellen Bedürfnisse.
