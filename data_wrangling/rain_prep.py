@@ -1,11 +1,11 @@
 import pandas as pd
 import csv
 
-rain_data_1 = pd.read_csv(r'C:\Users\Murat Kayhan\OneDrive - FHNW\Documents\FHNW\ckd\Data\rain_data_1.csv', sep =';')
-rain_data_2 = pd.read_csv(r'C:\Users\Murat Kayhan\OneDrive - FHNW\Documents\FHNW\ckd\Data\rain_data_2.csv', sep=';')
-rain_data_3 = pd.read_csv(r'C:\Users\Murat Kayhan\OneDrive - FHNW\Documents\FHNW\ckd\Data\rain_data_3.csv', sep=';')
-rain_data_4 = pd.read_csv(r'C:\Users\Murat Kayhan\OneDrive - FHNW\Documents\FHNW\ckd\Data\rain_data_4.csv', sep=';')
-rain_data_ch = pd.read_csv(r'C:\Users\Murat Kayhan\OneDrive - FHNW\Documents\FHNW\ckd\Data\rain_data_4.csv', sep=';')
+rain_data_1 = pd.read_csv(r'../data/source/rain_data_1.csv', sep =';')
+rain_data_2 = pd.read_csv(r'../data/source/rain_data_2.csv', sep=';')
+rain_data_3 = pd.read_csv(r'../data/source/rain_data_3.csv', sep=';')
+rain_data_4 = pd.read_csv(r'../data/source/rain_data_4.csv', sep=';')
+rain_data_ch = pd.read_csv(r'../data/source/rain_data_ch.csv', sep=';')
 
 rain_data_1['DAY'] = pd.to_datetime(rain_data_1['DAY'], format='%Y%m%d').dt.strftime('%d.%m.%Y')
 rain_data_2['DAY'] = pd.to_datetime(rain_data_2['DAY'], format='%Y%m%d').dt.strftime('%d.%m.%Y')

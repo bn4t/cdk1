@@ -9,7 +9,7 @@ from opencage.geocoder import OpenCageGeocode
 pd.set_option('display.width', 2000)
 
 # Daten einlesen
-hanze = pd.read_csv(r'C:\Users\Murat Kayhan\OneDrive - FHNW\Documents\FHNW\ckd\Data\hanze.csv', sep=',')
+hanze = pd.read_csv(r'../data/source/hanze_all.csv', sep=',')
 hanze_regions = pd.read_csv(r'../data/source/regioncodes.csv', sep=',')
 
 
