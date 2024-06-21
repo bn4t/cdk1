@@ -10,7 +10,7 @@ pd.set_option('display.width', 2000)
 
 # Daten einlesen
 hanze = pd.read_csv(r'C:\Users\Murat Kayhan\OneDrive - FHNW\Documents\FHNW\ckd\Data\hanze.csv', sep=',')
-hanze_regions = pd.read_csv(r'C:\Users\Murat Kayhan\OneDrive - FHNW\Documents\FHNW\ckd\Data\Neuer Ordner\regioncodes.csv', sep=',')
+hanze_regions = pd.read_csv(r'../data/source/regioncodes.csv', sep=',')
 
 
 # Unnötige Spalten löschen
