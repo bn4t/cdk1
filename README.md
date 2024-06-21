@@ -73,7 +73,7 @@ git lfs pull
      ```bash
      python dashboard_alps.py
      ```
-   - Für `data_story.html`, öffnen Sie die Datei direkt im Browser:
+   - Für `data_story.html`, öffnen sie die directory `data_story/` im terminal und führen Sie folgenden Command aus um die Data Story im browser anzuzeigen:
      ```bash
      open data_story.html
      ```
