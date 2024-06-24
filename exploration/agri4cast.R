@@ -1,4 +1,4 @@
-agri4cast <- read.csv("data/source/df_ch.csv", sep = ";")
+agri4cast <- read.csv("../data/source/df_ch.csv", sep = ";")
 
 library(dplyr)
 library(ggplot2)
