@@ -1,0 +1,6 @@
+dash
+plotly
+pandas
+numpy
+dash_bootstrap_components
+geopandas

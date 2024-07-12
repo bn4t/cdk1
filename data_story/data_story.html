@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fluten durch Klimawandel? | Wie der Klimawandel Flutkatastrophen verursacht</title>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=bebas-neue:400" rel="stylesheet"/>
+    <script>
+        document.onreadystatechange = function () {
+            if (document.readyState !== "complete") {
+                document.querySelector("#content").style.visibility = "hidden";
+                document.querySelector("#loader").style.visibility = "visible";
+            } else {
+                document.querySelector("#loader").style.display = "none";
+                document.querySelector("#content").style.visibility = "visible";
+            }
+        };
+    </script>
+</head>
+<style>
+
+    * {
+        scroll-behavior: smooth;
+        font-family: 'Bebas Neue', cursive;
+    }
+
+    .loader {
+        margin-top: 20rem;
+        position: relative;
+    }
+
+    .outer,
+    .middle,
+    .inner {
+        border: 3px solid transparent;
+        border-top-color: #000000;
+        border-right-color: #000000;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+    }
+
+    .outer {
+        width: 3.5em;
+        height: 3.5em;
+        margin-left: -1.75em;
+        margin-top: -1.75em;
+        animation: spin 2s linear infinite;
+    }
+
+    .middle {
+        width: 2.1em;
+        height: 2.1em;
+        margin-left: -1.05em;
+        margin-top: -1.05em;
+        animation: spin 1.75s linear reverse infinite;
+    }
+
+    .inner {
+        width: 0.8em;
+        height: 0.8em;
+        margin-left: -0.4em;
+        margin-top: -0.4em;
+        animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+
+    .content {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+        overflow: auto;
+        position: relative;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .section {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        scroll-snap-align: start;
+    }
+
+    #section-2 {
+
+        /*
+        linear gradient background image meteo.png
+        */
+        background-image: linear-gradient(rgb(254 243 199), rgba(0, 0, 0, 0.6)), url('assets/meteo.png');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        box-shadow: inset 1em -1em 10em 10em rgb(254 243 199);
+    }
+
+    /*
+    Half-tone effect in different strengths
+
+    */
+
+    .video-wrapper-light {
+        position: static;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        filter: saturate(0) brightness(2) contrast(5);
+        -webkit-filter: saturate(0) brightness(2) contrast(5);
+    }
+
+    .video-wrapper-light::after {
+        content: ' ';
+        display: block;
+        position: static;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background-size: 14px 10px, 14px 10px;
+        background-position: 0, 7px 0px;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0) 50%, #000), radial-gradient(circle, rgba(255, 255, 255, 0) 50%, #000);
+        mix-blend-mode: multiply;
+    }
+
+    .video-wrapper-light video {
+        width: 100vw;
+        height: 56.25vw; /* Given a 16:9 aspect ratio, 9/16*100 = 56.25 */
+        min-height: 100vh;
+        min-width: 177.77vh; /* Given a 16:9 aspect ratio, 16/9*100 = 177.77 */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+
+    .video-wrapper-medium {
+        position: static;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        filter: saturate(0) brightness(2) contrast(5);
+        -webkit-filter: saturate(0) brightness(2) contrast(5);
+    }
+
+    .video-wrapper-medium::after {
+        content: ' ';
+        display: block;
+        position: static;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background-size: 16px 10px, 16px 10px;
+        background-position: 0, 8px 0px;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0) 4%, #000), radial-gradient(circle, rgba(255, 255, 255, 0) 4%, #000);
+        mix-blend-mode: multiply;
+    }
+
+    .video-wrapper-medium video {
+        width: 100vw;
+        height: 56.25vw; /* Given a 16:9 aspect ratio, 9/16*100 = 56.25 */
+        min-height: 100vh;
+        min-width: 177.77vh; /* Given a 16:9 aspect ratio, 16/9*100 = 177.77 */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(254 243 199);
+        mix-blend-mode: multiply;
+    }
+
+    mark {
+        background: linear-gradient(
+                100deg,
+                rgba(255, 221, 64, 0) 0.9%,
+                rgba(255, 221, 64, 1) 2.4%,
+                rgba(255, 221, 64, 0.6) 5.8%,
+                rgba(255, 221, 64, 0.4) 93%,
+                rgba(255, 221, 64, 0.7) 96%,
+                rgba(255, 221, 64, 0) 98%
+        ),
+        linear-gradient(
+                180deg,
+                rgba(255, 221, 64, 0) 0%,
+                rgba(255, 221, 64, 0.3) 7.9%,
+                rgba(255, 221, 64, 0) 15%
+        );
+        border-radius: 0.125em;
+        box-decoration-break: clone;
+        padding: 0.125em 0.25em;
+    }
+
+
+</style>
+
+
+<body class="bg-amber-100 subpixel-antialiased">
+
+<div class="loader" id="loader">
+    <div class="outer"></div>
+    <div class="middle"></div>
+    <div class="inner"></div>
+</div>
+
+
+<div class="content" id="content">
+    <div class="section my-10 py-32 flex items-center justify-center" id="section-1">
+        <div>
+            <h1 class="text-center italic md:text-9xl sm:text-8xl text-7xl font-semibold tracking-widest px-10">Fluten durch
+                Klimawandel?</h1>
+            <h2 class="text-center mt-4 text-5xl font-semibold tracking-wider italic w-5/6 mx-auto px-10">Gibt es einen
+                Zusammenhang zwischen Fluten und dem Klimawandel?</h2>
+            <a href="#section-2">
+                <svg class="w-20 h-20 animate-bounce mx-auto mt-28" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="section" id="section-2">
+        <div class="mt-10 ml-3 z-10 text-black absolute w-full">
+            <h1 class="text-9xl w-5/6">Einleitung</h1>
+            <div class="flex flex-wrap items-start justify-between lg:mt-10 mt-20 pr-20 pl-1">
+                <div class="lg:w-3/5 lg:text-2xl md:text-3xl w-full text-5xl">
+                    <p>Es ist der
+                        <mark>30.Mai 2024</mark>
+                        , für die nächsten Tage befürchten Meteorologen, dass sich eine Vb-Wetterlage über Europa
+                        einstellen könnte, die zu starken Regenfällen und möglicherweise Überschwemmungen führen könnte.
+                    </p>
+                    <hr class="text-black border border-black mt-5">
+                    <p class="lg:mt-10 mt-20">Ein ähnliches Wetter-phänomen fand im August 2005 statt, als sich eine
+                        <mark>verheerende Flut</mark>
+                        entlang der Aare ereignete, die durch aussergewöhnlich starke und anhaltende Regenfälle
+                        ausgelöst wurde.
+                    </p>
+                    <p class="lg:mt-3 mt-10">
+                        Dieses
+                        <mark>Extremwetterereignis</mark>
+                        wird als eine der gravierendsten Fluten der
+                        letzten
+                        Jahrzehnte in der Schweiz betrachtet und ist ein Beispiel dafür, wie
+                        <mark>starke und anhaltende Regenfälle</mark>
+                        zu Naturkatastrophen werden.
+                    </p>
+                    <p class="lg:mt-3 mt-10">
+                        In dieser Data Story wollen wir untersuchen, wie der
+                        <mark>Klimawandel</mark>
+                        die Wahrscheinlichkeit und
+                        Schwere solcher Ereignisse erhöhen könnte und welche Massnahmen ergriffen werden können,
+                        um
+                        <mark>Auswirkungen von solchen Unwetter</mark>
+                        zu minimieren.
+                    </p>
+                </div>
+                <div class="lg:w-2/5 lg:px-5 w-full mt-20">
+                    <img src="assets/niederschlag-2005.png" class="rounded-2xl shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="section" id="section-3">
+
+        <div class="mt-10 z-10 text-white absolute w-full ml-3">
+            <h1 class="text-9xl w-5/6">Schaden</h1>
+            <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
+                <div class="lg:w-3/5 lg:text-2xl md:text-3xl w-full text-5xl">
+                    <p>Die Flut von 2005 war eine der schwersten Naturkatastrophen in der Schweiz seit Jahrzehnten und
+                        verursachte
+                        erhebliche
+                        <mark class="text-white">Schäden an Gebäuden, Infrastruktur und landwirtschaftlichen Flächen.
+                        </mark>
+                    </p>
+                    <p class="lg:mt-3 mt-10">Die Überschwemmungen verursachten insgesamt Schäden in Höhe von etwa
+                        <mark class="text-white">2,5 Milliarden Franken</mark>
+                        ,
+                        wobei der Grossteil der Schäden im privaten Bereich waren.
+                    </p>
+                    <p class="lg:mt-3 mt-10">Die Flut betraf
+                        <mark class="text-white">17 Kantone</mark>
+                        , wobei
+                        <mark class="text-white">sechs Menschen</mark>
+                        ihr Leben verloren. Besonders betroffen von den Schäden waren die Kantone
+                        <mark class="text-white">Bern, Glarus und Uri</mark>
+                        .
+                    </p>
+                    <p class="lg:mt-3 mt-10">An vielen Orten wurden neue Rekordwerte (Niederschläge, Abflüsse und
+                        Seestände) gemessen, dessen Wiederkehrperiode meist im seltenen Bereich (100 - 300 Jahre)
+                        liegt.</p>
+                    <p class="lg:mt-3 mt-10">Insgesamt kam die Schweiz dank
+                        <mark class="text-white">guter Vorbereitung und funktionierender Schutzkonzepte</mark>
+                        glimpflich davon, dennoch
+                        zeigte die Flut von 2005, wie verheerend solche Ereignisse sein können.
+                    </p>
+
+                </div>
+                <div class="w-2/5 px-5 flex flex-wrap">
+                    <video autoplay muted loop class="mt-5 rounded-xl">
+                        <source src="assets/flood-2005.mp4" type="video/mp4">
+                    </video>
+                    <p class="text-2xl text-center mt-3">Video-Aufnahmen der Flut zeigen die verursachten Schäden und
+                        Rettungsmassnahmen.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-wrapper-medium">
+            <video autoplay muted loop>
+                <source src="assets/flood-2005.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="section" id="section-4">
+        <div class="mt-10 z-10 text-white absolute w-full ml-3">
+            <h1 class="text-9xl w-5/6">Ursache</h1>
+
+            <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
+                <div class="lg:w-3/5 lg:text-2xl md:text-3xl w-full text-5xl">
+                    <p>Die Flut wurde durch eine ungewöhnliche,
+                        meteorologische Konstellation ausgelöst, die als
+                        <mark class="text-white">VB-Wetterlage</mark>
+                        bekannt ist.
+                    </p>
+                    <p class="lg:mt-3 mt-10">
+                        Eine VB-Wetterlage tritt dann auf, wenn kalte Luftmassen von
+                        <mark class="text-white">Nordwesten über Europa</mark>
+                        bis in den Golf von
+                        Genua ziehen. Dort nimmt dieses Tiefdruckgebiet sehr viel Feuchtigkeit aus dem warmen Mittelmeer
+                        auf.
+                    </p>
+                    <p class="lg:mt-3 mt-10">Mit Wasser gesättigt ziehen die Luftmassen dann in Richtung Nordosten nach
+                        Österreich,
+                        Deutschland, Tschechien und der Schweiz. Wenn die Luftmassen dort über Land wieder abkühlen,
+                        können sie zu
+                        <mark class="text-white">extremen Regen und Überschwemmungen</mark>
+                        führen.
+                    </p>
+                    <p class="lg:mt-3 mt-10">
+                        Zusätzlich zur speziellen Wetterlage, stieg die Schneefallgrenze in der Schweiz auf
+                        <mark class="text-white">über 3000 Meter</mark>
+                        , sodass
+                        <mark class="text-white">zusätzlicher Niederschlag als Regen</mark>
+                        abfloss.
+                    </p>
+                </div>
+                <div class="w-2/5">
+                    <div class="px-36">
+                        <img src="assets/wetterlage-2005.png" class="rounded-xl">
+                    </div>
+                    <p class="xl:text-2xl md:text-xl text-center mt-5">Höhenwetterkarte auf rund
+                        <mark class="text-white">5000m Höhe</mark>
+                        , Montag,
+                        22.08.05, 14.00 MESZ
+                    </p>
+                    <p class="xl:text-2xl md:text-xl text-center mt-2">Das Bild der Höhenströmung verdeutlicht, wie das
+                        Tief, das im
+                        Gegenuhrzeigersinn umflossen wird, über der warmen Adria aus Süden sehr feuchte Luftmassen über
+                        die Österreichischen Alpen und anschliessend von Nordosten her wieder zurück an den
+                        Alpennordhang führt (rote Pfeile).</p>
+                </div>
+            </div>
+        </div>
+        <div class="video-wrapper-medium">
+            <video autoplay muted loop>
+                <source src="assets/nasa-less-slowmo.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="section" id="section-5">
+        <div class="mt-10 z-10 text-white absolute ml-3 w-full">
+            <h1 class="text-9xl w-5/6">Wie Weiter?</h1>
+
+            <div class="flex flex-wrap items-start justify-between mt-10 pr-20 pl-1">
+                <div class="lg:w-3/5 lg:text-2xl md:text-3xl w-full text-5xl">
+
+                    <p>Ereignisse wie die, im August 2005 erfolgte, Überschwemmung, zeigen
+                        <mark class="text-white">wie starke Regenfälle zu
+                            Naturkatastrophen führen
+                        </mark>
+                        können.
+                        Auch wenn sich das Schutzkonzept der Schweiz, 2005 grundsätzlich bewährt hat, ist es doch zu
+                        <mark class="text-white">erheblichen Schäden</mark>
+                        gekommen.
+                    </p>
+                    <p class="lg:mt-3 mt-10">Prognosen von Klimawissenschaftlern deuten darauf hin, dass mit der
+                        Erwärmung des Klimas
+                        <mark class="text-white">stärkere
+                            Regenfälle öfters vorkommen
+                        </mark>
+                        könnten.
+                    </p>
+                    <p class="lg:mt-3 mt-10">Trifft diese Prognose ein, wäre dies auch eine Gefahr für die Schweiz.
+                        Mit voranschreitendem Klimawandel könnten längere und heftigere Regenfälle öfters vorkommen, was
+                        <mark class="text-white">vermehrt zu Überschwemmungen</mark>
+                        führen könnte, sofern keine weiteren Schutzmassnahmen getroffen werden.
+                    </p>
+                    <p class="mt-12 2xl:text-5xl text-4xl">Die Flut von 2005 zeigt, was vermehrt auf uns zukömmen
+                        könnte,
+                        wenn aktuelle Klimaprognosen eintreffen und die Schweiz ihre Schutzkonzepte nicht kontinuierlich
+                        verbessert.</p>
+                </div>
+                <div class="w-2/5 px-5">
+                    <div class="px-32">
+                        <img src="assets/niederschlag-temperatur.png" class="rounded-xl">
+                    </div>
+                    <p class="text-2xl mt-3 text-center">Prognose Zusammenhang Temperatur und Stärke von Regenfällen in
+                        De Bilt, Niederlanden.
+                        Da die Schweiz und Niederlande ein ähnliches Klima haben, kann man anhand dieser Prognose in
+                        davon ausgehen, dass mit der fortschreitenden Klimaerwärmung die
+                        Regenfälle uch in der Schweiz stärker werden.<br>Quelle: doi:10.1038/ngeo262</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-wrapper-medium">
+            <video autoplay muted loop>
+                <source src="assets/tdat.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="section" id="section-6">
+        <div class="mt-10 z-10 text-black absolute ml-3 w-full">
+            <h1 class="text-9xl w-5/6">Quellen</h1>
+            <ul class="lg:text-2xl text-4xl mt-20 list-disc pl-10">
+                <li><a href="https://www.youtube.com/watch?v=x1SgmFa0r04" class="hover:underline" target="_blank"> NASA | A Year in the Life of Earth's CO2. <br>URL: youtube.com/watch?v=x1SgmFa0r04 (Besucht am 2024/06/10)</a>
+                </li>
+                <li><a href="https://www.youtube.com/watch?v=Ku_IseK3xTc" class="hover:underline" target="_blank">The Day After Tomorrow - Official® Trailer. <br>URL: youtube.com/watch?v=Ku_IseK3xTc (Besucht am 2024/06/10)</a>
+                </li>
+                <li><a href="https://www.youtube.com/watch?v=4GrfJB52ouc" class="hover:underline" target="_blank"> 2005 Landunter Hochwasser Aare. <br>URL: youtube.com/watch?v=4GrfJB52ouc (Besucht am 2024/06/10)</a>
+                </li>
+                <li><a href="http://www.nature.com/doifinder/10.1038/ngeo262" class="hover:underline">Geert Lenderink & Erik van Meijgaard. Increase in hourly precipitation extremes beyond expectations from temperature changes. <br>URL: doi:10.1038/ngeo262 (Besucht am 2024/06/10)</a>
+                </li>
+                <li><a href="https://www.news.admin.ch/NSBSubscriber/message/attachments/1123.pdf" class="hover:underline">Bundesamt für Wasser und Geologie. <br>URL: www.news.admin.ch/NSBSubscriber/message/attachments/1123.pdf (Besucht am 2024/06/10)</a></li>
+            </ul>
+        </div>
+
+
+    </div>
+</div>
+
+
+</body>
+</html>
